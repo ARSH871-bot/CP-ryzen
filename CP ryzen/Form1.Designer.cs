@@ -69,7 +69,7 @@ namespace ShippingManagementSystem
             this.lblUsername.Font = new System.Drawing.Font("Arial", 10F);
             this.lblUsername.ForeColor = Color.Gray;
 
-            // 
+            // s
             // txtUsername
             // 
             this.txtUsername.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 185);
