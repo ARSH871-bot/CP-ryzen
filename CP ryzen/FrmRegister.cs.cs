@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+//This is the Register (Arsh)
 
 namespace ShippingManagementSystem
 {
@@ -51,6 +52,11 @@ namespace ShippingManagementSystem
         }
 
         private void pictureBoxLogo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void frmRegister_Load(object sender, EventArgs e)
         {
 
         }
