@@ -42,7 +42,7 @@ namespace ShippingManagementSystem
             this.btnNotifications = new Button();
             this.btnSettings = new Button();
 
-            // Sidebar Panel
+            // Sidebar Panel 
             this.sidebarPanel.BackColor = System.Drawing.Color.DarkSlateGray;
             this.sidebarPanel.Dock = DockStyle.Left;
             this.sidebarPanel.Width = 200;
