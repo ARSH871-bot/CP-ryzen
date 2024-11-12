@@ -52,7 +52,7 @@ namespace ShippingManagementSystem
             this.sidebarPanel.Controls.Add(this.btnNotifications);
             this.sidebarPanel.Controls.Add(this.btnSettings);
 
-            // Header Panel
+            // Header Panel 
             this.headerPanel.BackColor = System.Drawing.Color.SteelBlue;
             this.headerPanel.Dock = DockStyle.Top;
             this.headerPanel.Height = 60;
