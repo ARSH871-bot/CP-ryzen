@@ -62,7 +62,7 @@ namespace ShippingManagementSystem
             this.lblTitle.AutoSize = true;
 
             // 
-            // lblUsername
+            // lblUsername 
             // 
             this.lblUsername.Text = "Username";
             this.lblUsername.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 160);
