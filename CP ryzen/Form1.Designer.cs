@@ -116,7 +116,7 @@ namespace ShippingManagementSystem
             this.lblRegister.Click += new System.EventHandler(this.lblRegister_Click);
 
             // 
-            // frmLogin
+            // frmLogin 
             // 
             this.Controls.Add(this.pictureBoxLogo);
             this.Controls.Add(this.lblTitle);
