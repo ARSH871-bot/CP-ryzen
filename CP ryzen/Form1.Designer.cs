@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing; // Required for color and image usage
 using System.Windows.Forms;
+
 //This is the Login Form 
 
 namespace ShippingManagementSystem
@@ -70,7 +71,7 @@ namespace ShippingManagementSystem
             this.lblUsername.Font = new System.Drawing.Font("Arial", 10F);
             this.lblUsername.ForeColor = Color.Gray;
 
-            // 
+            // s
             // txtUsername
             // 
             this.txtUsername.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 185);

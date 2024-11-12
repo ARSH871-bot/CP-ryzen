@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
 
+//This is the Dashboard (Samnika)
+
 namespace ShippingManagementSystem
 {
     partial class frmDashboard
@@ -48,6 +50,7 @@ namespace ShippingManagementSystem
             // sidebarPanel
             // 
             this.sidebarPanel.BackColor = System.Drawing.Color.Maroon;
+
             this.sidebarPanel.Controls.Add(this.btnSettings);
             this.sidebarPanel.Controls.Add(this.btnNotifications);
             this.sidebarPanel.Controls.Add(this.btnReports);
