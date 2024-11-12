@@ -49,8 +49,8 @@ namespace ShippingManagementSystem
             // 
             // pictureBoxLogo
             // 
-            this.pictureBoxLogo.Image = Image.FromFile(@"C:\ARSHOP\CP ryzen\Images\Logo.jpg"); // Replace with actual path
-            this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40); // Center the logo
+            this.pictureBoxLogo.Image = Image.FromFile(@"C:\ARSHOP\CP ryzen\Images\Logo.jpg"); 
+            this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40); 
             this.pictureBoxLogo.Size = new System.Drawing.Size(120, 60);
             this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 
@@ -64,7 +64,7 @@ namespace ShippingManagementSystem
             this.lblTitle.AutoSize = true;
 
             // 
-            // lblUsername
+            // lblUsername 
             // 
             this.lblUsername.Text = "Username";
             this.lblUsername.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 160);
@@ -118,7 +118,7 @@ namespace ShippingManagementSystem
             this.lblRegister.Click += new System.EventHandler(this.lblRegister_Click);
 
             // 
-            // frmLogin
+            // frmLogin 
             // 
             this.Controls.Add(this.pictureBoxLogo);
             this.Controls.Add(this.lblTitle);
