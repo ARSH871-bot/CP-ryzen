@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-
+//This is the DashBoard
+// I have adjust the size of Dashboard
 namespace ShippingManagementSystem
 {
     public partial class frmDashboard : Form
@@ -11,13 +12,17 @@ namespace ShippingManagementSystem
         {
             InitializeComponent();
             loggedInUser = user;
+        }
+
+        private void frmDashboard_Load(object sender, EventArgs e)
+        {
             lblWelcome.Text = $"Welcome, {loggedInUser.Username}!";
             lblRole.Text = $"Role: {loggedInUser.Role}";
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("You have been logged out.");
+            MessageBox.Show("You have been logged out.", "Logout", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.Hide();
             new frmLogin().Show();
         }
@@ -49,11 +54,16 @@ namespace ShippingManagementSystem
 
         private void DisplayInMainContentPanel(Form form)
         {
-            this.mainContentPanel.Controls.Clear();
+            mainContentPanel.Controls.Clear();
             form.TopLevel = false;
             form.Dock = DockStyle.Fill;
-            this.mainContentPanel.Controls.Add(form);
+            mainContentPanel.Controls.Add(form);
             form.Show();
+        }
+
+        private void headerPanel_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
