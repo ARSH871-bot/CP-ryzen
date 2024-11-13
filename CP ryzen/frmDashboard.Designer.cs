@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
 
+//This is the Dashboard (Samnika)
+
 namespace ShippingManagementSystem
 {
     partial class frmDashboard
