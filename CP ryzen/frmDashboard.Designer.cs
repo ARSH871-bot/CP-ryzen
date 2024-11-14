@@ -51,63 +51,7 @@ namespace ShippingManagementSystem
             // 
             this.sidebarPanel.BackColor = System.Drawing.Color.Maroon;
 
-            this.sidebarPanel.Controls.Add(this.btnSettings);
-            this.sidebarPanel.Controls.Add(this.btnNotifications);
-            this.sidebarPanel.Controls.Add(this.btnReports);
-            this.sidebarPanel.Controls.Add(this.btnTracking);
-            this.sidebarPanel.Controls.Add(this.btnManageShipments);
-            this.sidebarPanel.Controls.Add(this.btnLogout);
-            this.sidebarPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.sidebarPanel.Location = new System.Drawing.Point(0, 100);
-            this.sidebarPanel.Name = "sidebarPanel";
-            this.sidebarPanel.Size = new System.Drawing.Size(250, 600);
-            this.sidebarPanel.TabIndex = 1;
-            // 
-            // btnSettings
-            // 
-            this.btnSettings.Location = new System.Drawing.Point(0, 0);
-            this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(75, 23);
-            this.btnSettings.TabIndex = 0;
-            // 
-            // btnNotifications
-            // 
-            this.btnNotifications.Location = new System.Drawing.Point(0, 0);
-            this.btnNotifications.Name = "btnNotifications";
-            this.btnNotifications.Size = new System.Drawing.Size(75, 23);
-            this.btnNotifications.TabIndex = 1;
-            // 
-            // btnReports
-            // 
-            this.btnReports.Location = new System.Drawing.Point(0, 0);
-            this.btnReports.Name = "btnReports";
-            this.btnReports.Size = new System.Drawing.Size(75, 23);
-            this.btnReports.TabIndex = 2;
-            // 
-            // btnTracking
-            // 
-            this.btnTracking.Location = new System.Drawing.Point(0, 0);
-            this.btnTracking.Name = "btnTracking";
-            this.btnTracking.Size = new System.Drawing.Size(75, 23);
-            this.btnTracking.TabIndex = 3;
-            // 
-            // btnManageShipments
-            // 
-            this.btnManageShipments.Location = new System.Drawing.Point(0, 0);
-            this.btnManageShipments.Name = "btnManageShipments";
-            this.btnManageShipments.Size = new System.Drawing.Size(75, 23);
-            this.btnManageShipments.TabIndex = 4;
-            // 
-            // btnLogout
-            // 
-            this.btnLogout.Location = new System.Drawing.Point(0, 0);
-            this.btnLogout.Name = "btnLogout";
-            this.btnLogout.Size = new System.Drawing.Size(75, 23);
-            this.btnLogout.TabIndex = 5;
-            // 
-            // headerPanel
-            // 
-            this.headerPanel.BackColor = System.Drawing.Color.Maroon;
+
             this.headerPanel.Controls.Add(this.lblWelcome);
             this.headerPanel.Controls.Add(this.lblRole);
             this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
