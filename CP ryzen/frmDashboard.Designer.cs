@@ -51,7 +51,6 @@ namespace ShippingManagementSystem
             // 
             this.sidebarPanel.BackColor = System.Drawing.Color.Maroon;
 
-
             this.headerPanel.Controls.Add(this.lblWelcome);
             this.headerPanel.Controls.Add(this.lblRole);
             this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
