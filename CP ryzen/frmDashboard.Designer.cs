@@ -89,7 +89,7 @@ namespace ShippingManagementSystem
             this.mainContentPanel.Name = "mainContentPanel";
             this.mainContentPanel.Size = new System.Drawing.Size(950, 600);
             this.mainContentPanel.TabIndex = 0;
-            // 
+            //  
             // frmDashboard
             // 
             this.ClientSize = new System.Drawing.Size(1200, 700);

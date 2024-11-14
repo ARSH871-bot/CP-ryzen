@@ -48,7 +48,7 @@ namespace ShippingManagementSystem
 
             // 
             // pictureBoxLogo
-            //  
+            //
             this.pictureBoxLogo.Image = Image.FromFile(@"C:\ARSHOP\CP ryzen\Images\Logo.jpg");
             this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40);
             this.pictureBoxLogo.Size = new System.Drawing.Size(120, 60);
