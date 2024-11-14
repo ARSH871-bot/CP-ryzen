@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing; // Required for color and image usage
 using System.Windows.Forms;
+//This is the Login Form 
 
 //This is the Login Form 
 
@@ -44,7 +45,7 @@ namespace ShippingManagementSystem
             // Set form size to 50% of screen dimensions
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;
             int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-            this.ClientSize = new System.Drawing.Size(screenWidth / 2, screenHeight / 2);
+/            this.ClientSize = new System.Drawing.Size(screenWidth / 2, screenHeight / 2);
 
             // 
             // pictureBoxLogo
