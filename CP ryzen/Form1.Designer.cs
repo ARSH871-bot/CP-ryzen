@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing; // Required for color and image usage
 using System.Windows.Forms;
-//This is the Login group (Harpreet singh)
+
+//This is the Login Form 
+
 namespace ShippingManagementSystem
 {
     partial class frmLogin
