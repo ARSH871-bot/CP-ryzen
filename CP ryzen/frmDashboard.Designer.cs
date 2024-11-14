@@ -50,7 +50,7 @@ namespace ShippingManagementSystem
             this.sidebarPanel.Controls.Add(this.btnTracking);
             this.sidebarPanel.Controls.Add(this.btnReports);
             this.sidebarPanel.Controls.Add(this.btnNotifications);
-            this.sidebarPanel.Controls.Add(this.btnSettings);
+            this.sidebarPanel.Controls.Add(this.btnSettings); 
 
             // Header Panel 
             this.headerPanel.BackColor = System.Drawing.Color.SteelBlue;
