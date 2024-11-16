@@ -31,7 +31,7 @@ namespace ShippingManagementSystem
         }
 
         private void InitializeComponent()
-        {
+        { 
             this.sidebarPanel = new System.Windows.Forms.Panel();
             this.btnSettings = new System.Windows.Forms.Button();
             this.btnNotifications = new System.Windows.Forms.Button();
