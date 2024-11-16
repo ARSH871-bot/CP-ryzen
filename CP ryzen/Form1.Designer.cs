@@ -44,7 +44,7 @@ namespace ShippingManagementSystem
 
             // Set form size to 50% of screen dimensions
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+            int screenHeight = Screen.PrimaryScreen.Bounds.Height; 
 /            this.ClientSize = new System.Drawing.Size(screenWidth / 2, screenHeight / 2);
 
             // 
