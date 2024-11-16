@@ -62,7 +62,7 @@ namespace ShippingManagementSystem
             this.lblTitle.Font = new System.Drawing.Font("Arial", 14F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.DarkSlateGray;
             this.lblTitle.Location = new System.Drawing.Point((this.ClientSize.Width - 280) / 2, 120);
-            this.lblTitle.AutoSize = true;
+            this.lblTitle.AutoSize = true; 
 
             // 
             // lblUsername 
