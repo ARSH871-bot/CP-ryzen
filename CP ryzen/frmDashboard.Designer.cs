@@ -117,6 +117,6 @@ namespace ShippingManagementSystem
             button.Dock = DockStyle.Top;
             button.Height = 50;
             button.Click += clickHandler;
-        }
+        } 
     }
 }
