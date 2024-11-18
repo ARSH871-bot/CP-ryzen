@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Drawing; // Required for color and image usage
-using System.Windows.Forms;
+using System.Windows.Forms; // Required for creating Windows Forms
 
 //This is the Login Form 
-
+// Namespace for the Shipping Management System
 namespace ShippingManagementSystem
 {
+    // Partial class for the login form
+
     partial class frmLogin
     {
+        // Components for the form
+
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
         private System.Windows.Forms.Label lblTitle;
