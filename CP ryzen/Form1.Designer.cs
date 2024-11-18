@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Drawing; // Required for color and image usage
-using System.Windows.Forms;
-//This is the Login Form 
 
+using System.Windows.Forms; // Required for creating Windows Form
 //This is the Login Form 
-
+// Namespace for the Shipping Management System
 namespace ShippingManagementSystem
 {
+    // Partial class for the login form
+
     partial class frmLogin
     {
+        // Components for the form
+
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
         private System.Windows.Forms.Label lblTitle;
@@ -49,9 +52,15 @@ namespace ShippingManagementSystem
 
             // 
             // pictureBoxLogo
+
+            // 
+ //           this.pictureBoxLogo.Image = Image.FromFile(@"C:\ARSHOP\CP ryzen\Images\Logo.jpg"); // Replace with actual path
+            this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40); // Center the logo
+
             //  
             this.pictureBoxLogo.Image = Image.FromFile(@"C:\ARSHOP\CP ryzen\Images\Logo.jpg");
             this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40);
+
             this.pictureBoxLogo.Size = new System.Drawing.Size(120, 60);
             this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 
