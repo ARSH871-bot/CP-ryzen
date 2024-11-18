@@ -30,7 +30,7 @@ namespace ShippingManagementSystem
         }
 
         // Method for initializing the UI components
-        private void InitializeComponent()
+        private void InitializeComponent() 
         {
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.lblTitle = new System.Windows.Forms.Label();
