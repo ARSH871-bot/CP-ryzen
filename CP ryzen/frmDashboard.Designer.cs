@@ -8,18 +8,18 @@ namespace ShippingManagementSystem
     {
         private System.ComponentModel.IContainer components = null;
 
-        // Dashboard Components
+        // DashboardComponents
         private Panel sidebarPanel;
         private Panel headerPanel;
         private Label lblWelcome;
         private Label lblRole;
         private Button btnLogout;
         private Button btnManageShipments;
-        private Button btnTracking; 
+        private Button btnTracking;
         private Button btnReports;
         private Button btnNotifications;
         private Button btnSettings;
-        private Panel mainContentPanel;
+        private Panel mainContentPanel; 
 
         protected override void Dispose(bool disposing)
         {
@@ -31,7 +31,7 @@ namespace ShippingManagementSystem
         }
 
         private void InitializeComponent()
-        {
+        { 
             this.sidebarPanel = new System.Windows.Forms.Panel();
             this.btnSettings = new System.Windows.Forms.Button();
             this.btnNotifications = new System.Windows.Forms.Button();
@@ -47,7 +47,7 @@ namespace ShippingManagementSystem
             this.headerPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // sidebarPanel
+            // sidebar Panel
             // 
             this.sidebarPanel.BackColor = System.Drawing.Color.Maroon;
 
@@ -88,7 +88,7 @@ namespace ShippingManagementSystem
             this.mainContentPanel.Name = "mainContentPanel";
             this.mainContentPanel.Size = new System.Drawing.Size(950, 600);
             this.mainContentPanel.TabIndex = 0;
-            // 
+            //  
             // frmDashboard
             // 
             this.ClientSize = new System.Drawing.Size(1200, 700);
@@ -116,7 +116,7 @@ namespace ShippingManagementSystem
             button.FlatStyle = FlatStyle.Flat;
             button.Dock = DockStyle.Top;
             button.Height = 50;
-            button.Click += clickHandler;
-        }
+            button.Click += clickHandler;  
+        } 
     }
 }
