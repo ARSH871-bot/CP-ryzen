@@ -71,15 +71,15 @@ namespace ShippingManagementSystem
             this.lblWelcome.TabIndex = 0; // Sets the tab index for focus navigation
 
             // 
-            // lblRole
+            // lblRole - displays the role of the logged-in user
             // 
-            this.lblRole.AutoSize = true;
-            this.lblRole.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.lblRole.ForeColor = System.Drawing.Color.White;
-            this.lblRole.Location = new System.Drawing.Point(270, 50);
-            this.lblRole.Name = "lblRole";
-            this.lblRole.Size = new System.Drawing.Size(0, 24);
-            this.lblRole.TabIndex = 1;
+            this.lblRole.AutoSize = true; // Automatically adjusts label size based on content
+            this.lblRole.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold); // Sets the font to Arial, 12pt, bold
+            this.lblRole.ForeColor = System.Drawing.Color.White; // Sets the text color to white for better visibility
+            this.lblRole.Location = new System.Drawing.Point(270, 50); // Specifies the position of the label
+            this.lblRole.Name = "lblRole"; // Assigns a name to the label for reference in the code
+            this.lblRole.Size = new System.Drawing.Size(0, 24); // Initial size, will be adjusted automatically by AutoSize property
+            this.lblRole.TabIndex = 1; // Sets the tab index for focus navigation
             // 
             // mainContentPanel
             // 
