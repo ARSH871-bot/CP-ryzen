@@ -47,7 +47,7 @@ namespace ShippingManagementSystem
             this.headerPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // sidebarPanel
+            // sidebar Panel
             // 
             this.sidebarPanel.BackColor = System.Drawing.Color.Maroon;
 
