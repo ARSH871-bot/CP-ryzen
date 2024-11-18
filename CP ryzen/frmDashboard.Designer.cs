@@ -11,7 +11,7 @@ namespace ShippingManagementSystem
         // Dashboard Components
         private Panel sidebarPanel;
         private Panel headerPanel;
-        private Label lblWelcome;
+        private Label lblWelcome; 
         private Label lblRole;
         private Button btnLogout;
         private Button btnManageShipments;
