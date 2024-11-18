@@ -193,6 +193,12 @@
             this.ResumeLayout(false);
             this.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbTrackingIcon)).EndInit();
+            this.Name = "frmTracking";
+            this.Text = "Shipment Tracking";
+            this.Load += new System.EventHandler(this.frmTracking_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTrackingIcon)).EndInit();
         }
     }
 }
