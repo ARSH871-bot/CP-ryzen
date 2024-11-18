@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing; // Required for color and image usage
-using System.Windows.Forms; // Required for creating Windows Forms
 
+using System.Windows.Forms; // Required for creating Windows Form
 //This is the Login Form 
 // Namespace for the Shipping Management System
 namespace ShippingManagementSystem
@@ -48,13 +48,19 @@ namespace ShippingManagementSystem
             // Set form size to 50% of screen dimensions
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;
             int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-            this.ClientSize = new System.Drawing.Size(screenWidth / 2, screenHeight / 2);
+/            this.ClientSize = new System.Drawing.Size(screenWidth / 2, screenHeight / 2);
 
             // 
             // pictureBoxLogo
+
             // 
  //           this.pictureBoxLogo.Image = Image.FromFile(@"C:\ARSHOP\CP ryzen\Images\Logo.jpg"); // Replace with actual path
             this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40); // Center the logo
+
+            //  
+            this.pictureBoxLogo.Image = Image.FromFile(@"C:\ARSHOP\CP ryzen\Images\Logo.jpg");
+            this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40);
+
             this.pictureBoxLogo.Size = new System.Drawing.Size(120, 60);
             this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 
@@ -68,7 +74,7 @@ namespace ShippingManagementSystem
             this.lblTitle.AutoSize = true;
 
             // 
-            // lblUsername
+            // lblUsername 
             // 
             this.lblUsername.Text = "Username";
             this.lblUsername.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 160);
@@ -122,7 +128,7 @@ namespace ShippingManagementSystem
             this.lblRegister.Click += new System.EventHandler(this.lblRegister_Click);
 
             // 
-            // frmLogin
+            // frmLogin 
             // 
             this.Controls.Add(this.pictureBoxLogo);
             this.Controls.Add(this.lblTitle);
