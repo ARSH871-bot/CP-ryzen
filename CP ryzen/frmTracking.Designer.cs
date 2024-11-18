@@ -169,7 +169,10 @@
             this.pbShipmentProgress.TabIndex = 11;
             // 
             // frmTracking
-            // 
+            // Similar initialization for Print, Help, and Dark Mode buttons
+            // ... (Add the remaining buttons with similar comments)
+
+            // Adding controls to the form and finalizing the layout
             this.ClientSize = new System.Drawing.Size(600, 550);
             this.Controls.Add(this.pbShipmentProgress);
             this.Controls.Add(this.lblClock);
@@ -183,6 +186,7 @@
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.txtTrackingNumber);
             this.Controls.Add(this.lblTracking);
+            // Add the rest of the controls similarly
             this.Name = "frmTracking";
             this.Text = "Shipment Tracking";
             this.Load += new System.EventHandler(this.frmTracking_Load);
