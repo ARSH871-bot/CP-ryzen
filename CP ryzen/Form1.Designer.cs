@@ -13,14 +13,14 @@ namespace ShippingManagementSystem
         // Components for the form
 
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.PictureBox pictureBoxLogo;
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.Label lblUsername;
-        private System.Windows.Forms.TextBox txtUsername;
-        private System.Windows.Forms.Label lblPassword;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Button btnLogin;
-        private System.Windows.Forms.Label lblRegister;
+        private System.Windows.Forms.PictureBox pictureBoxLogo;// Logo image
+        private System.Windows.Forms.Label lblTitle; // Form title
+        private System.Windows.Forms.Label lblUsername;// Username label
+        private System.Windows.Forms.TextBox txtUsername; // Username input
+        private System.Windows.Forms.Label lblPassword;  // Password label
+        private System.Windows.Forms.TextBox txtPassword; // Password input
+        private System.Windows.Forms.Button btnLogin; // Login button
+        private System.Windows.Forms.Label lblRegister; // Register link
 
         protected override void Dispose(bool disposing)
         {
