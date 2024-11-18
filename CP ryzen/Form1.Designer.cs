@@ -22,17 +22,21 @@ namespace ShippingManagementSystem
         private System.Windows.Forms.Button btnLogin; // Login button
         private System.Windows.Forms.Label lblRegister; // Register link
 
+        // Method to dispose resources
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
             {
-                components.Dispose();
+                components.Dispose(); // Dispose of form components
             }
-            base.Dispose(disposing);
+            base.Dispose(disposing); // Call base class Dispose method
         }
 
+
+        // Method to initialize the components of the form
         private void InitializeComponent()
         {
+            // Initialize all components
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();
