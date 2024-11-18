@@ -8,7 +8,7 @@ namespace ShippingManagementSystem
 {
     partial class frmLogin
     {
-        // Declaring UI components used in the form
+        // Declaring UI components used in the Form
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
         private System.Windows.Forms.Label lblTitle;

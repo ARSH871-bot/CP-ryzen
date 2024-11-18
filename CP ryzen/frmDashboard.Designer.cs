@@ -8,18 +8,18 @@ namespace ShippingManagementSystem
     {
         private System.ComponentModel.IContainer components = null;
 
-        // Dashboard Components
+        // DashboardComponents
         private Panel sidebarPanel;
         private Panel headerPanel;
-        private Label lblWelcome; 
+        private Label lblWelcome;
         private Label lblRole;
         private Button btnLogout;
         private Button btnManageShipments;
-        private Button btnTracking; 
+        private Button btnTracking;
         private Button btnReports;
         private Button btnNotifications;
         private Button btnSettings;
-        private Panel mainContentPanel;
+        private Panel mainContentPanel; 
 
         protected override void Dispose(bool disposing)
         {
