@@ -88,7 +88,7 @@
             // 
             // pbTrackingIcon
             // 
-            this.pbTrackingIcon.Image = System.Drawing.Image.FromFile(@"C:\ARSHOP\CP ryzen\CP ryzen\Resources\TI.png");
+//            this.pbTrackingIcon.Image = System.Drawing.Image.FromFile(@"C:\ARSHOP\CP ryzen\CP ryzen\Resources\TI.png");
             this.pbTrackingIcon.Location = new System.Drawing.Point(20, 20);
             this.pbTrackingIcon.Name = "pbTrackingIcon";
             this.pbTrackingIcon.Size = new System.Drawing.Size(60, 60);
