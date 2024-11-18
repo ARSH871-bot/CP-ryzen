@@ -19,28 +19,32 @@ namespace ShippingManagementSystem
 
 
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.PictureBox pictureBoxLogo;
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.Label lblUsername;
-        private System.Windows.Forms.TextBox txtUsername;
-        private System.Windows.Forms.Label lblPassword;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Button btnLogin;
-        private System.Windows.Forms.Label lblRegister;
 
-        // Method for releasing unmanaged resources
+        private System.Windows.Forms.PictureBox pictureBoxLogo;// Logo image
+        private System.Windows.Forms.Label lblTitle; // Form title
+        private System.Windows.Forms.Label lblUsername;// Username label
+        private System.Windows.Forms.TextBox txtUsername; // Username input
+        private System.Windows.Forms.Label lblPassword;  // Password label
+        private System.Windows.Forms.TextBox txtPassword; // Password input
+        private System.Windows.Forms.Button btnLogin; // Login button
+        private System.Windows.Forms.Label lblRegister; // Register link
+
+        // Method to dispose resources
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
             {
-                components.Dispose();
+                components.Dispose(); // Dispose of form components
             }
-            base.Dispose(disposing);
+            base.Dispose(disposing); // Call base class Dispose method
         }
 
-        // Method for initializing the UI components
-        private void InitializeComponent() 
+        // Method to initialize the components of the form
+        private void InitializeComponent()
+
         {
+            // Initialize all components
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();

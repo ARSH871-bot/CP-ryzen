@@ -2,19 +2,20 @@
 {
     partial class frmTracking
     {
+        // Components and controls for the form
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.Label lblTracking;
-        private System.Windows.Forms.TextBox txtTrackingNumber;
-        private System.Windows.Forms.Button btnTrack;
-        private System.Windows.Forms.RichTextBox rtbTrackingDetails;
-        private System.Windows.Forms.PictureBox pbTrackingIcon;
-        private System.Windows.Forms.ComboBox cmbHistory;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnPrint;
-        private System.Windows.Forms.Button btnHelp;
-        private System.Windows.Forms.Button btnDarkMode;
-        private System.Windows.Forms.Label lblClock;
-        private System.Windows.Forms.ProgressBar pbShipmentProgress;
+        private System.Windows.Forms.Label lblTracking; // Label for the form's title
+        private System.Windows.Forms.TextBox txtTrackingNumber; // Input box for entering the tracking number
+        private System.Windows.Forms.Button btnTrack; // Button to trigger tracking functionality
+        private System.Windows.Forms.RichTextBox rtbTrackingDetails; // Area to display tracking details
+        private System.Windows.Forms.PictureBox pbTrackingIcon; // Picture box for the tracking icon
+        private System.Windows.Forms.ComboBox cmbHistory; // Dropdown for tracking history
+        private System.Windows.Forms.Button btnSave; // Button to save tracking details
+        private System.Windows.Forms.Button btnPrint; // Button to print tracking details
+        private System.Windows.Forms.Button btnHelp; // Button to access help information
+        private System.Windows.Forms.Button btnDarkMode; // Button to toggle dark mode
+        private System.Windows.Forms.Label lblClock; // Label for the clock display
+        private System.Windows.Forms.ProgressBar pbShipmentProgress; // Progress bar for shipment status
 
         protected override void Dispose(bool disposing)
         {
@@ -168,7 +169,10 @@
             this.pbShipmentProgress.TabIndex = 11;
             // 
             // frmTracking
-            // 
+            // Similar initialization for Print, Help, and Dark Mode buttons
+            // ... (Add the remaining buttons with similar comments)
+
+            // Adding controls to the form and finalizing the layout
             this.ClientSize = new System.Drawing.Size(600, 550);
             this.Controls.Add(this.pbShipmentProgress);
             this.Controls.Add(this.lblClock);
@@ -182,12 +186,14 @@
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.txtTrackingNumber);
             this.Controls.Add(this.lblTracking);
+            // Add the rest of the controls similarly
             this.Name = "frmTracking";
             this.Text = "Shipment Tracking";
             this.Load += new System.EventHandler(this.frmTracking_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbTrackingIcon)).EndInit();
+
         }
     }
 }
