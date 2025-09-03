@@ -42,6 +42,7 @@
             this.pbShipmentProgress = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.pbTrackingIcon)).BeginInit();
             this.SuspendLayout();
+
             // 
             // lblTracking
             // 
@@ -53,6 +54,7 @@
             this.lblTracking.TabIndex = 0;
             this.lblTracking.Text = "Track Shipment";
             this.lblTracking.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
             // 
             // txtTrackingNumber
             // 
@@ -65,6 +67,7 @@
             this.txtTrackingNumber.ForeColor = System.Drawing.Color.Gray;
             this.txtTrackingNumber.GotFocus += new System.EventHandler(this.txtTrackingNumber_GotFocus);
             this.txtTrackingNumber.LostFocus += new System.EventHandler(this.txtTrackingNumber_LostFocus);
+
             // 
             // btnTrack
             // 
@@ -76,6 +79,7 @@
             this.btnTrack.Text = "Track";
             this.btnTrack.UseVisualStyleBackColor = true;
             this.btnTrack.Click += new System.EventHandler(this.btnTrack_Click);
+
             // 
             // rtbTrackingDetails
             // 
@@ -86,16 +90,27 @@
             this.rtbTrackingDetails.Size = new System.Drawing.Size(500, 150);
             this.rtbTrackingDetails.TabIndex = 3;
             this.rtbTrackingDetails.Text = "Tracking details will appear here...";
+
             // 
-            // pbTrackingIcon
+            // pbTrackingIcon - placeholder for tracking icon
             // 
-//            this.pbTrackingIcon.Image = System.Drawing.Image.FromFile(@"C:\ARSHOP\CP ryzen\CP ryzen\Resources\TI.png");
+            this.pbTrackingIcon.BackColor = System.Drawing.Color.LightGray;
             this.pbTrackingIcon.Location = new System.Drawing.Point(20, 20);
             this.pbTrackingIcon.Name = "pbTrackingIcon";
             this.pbTrackingIcon.Size = new System.Drawing.Size(60, 60);
             this.pbTrackingIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbTrackingIcon.TabIndex = 4;
             this.pbTrackingIcon.TabStop = false;
+
+            // 
+            // pbShipmentProgress
+            // 
+            this.pbShipmentProgress.Location = new System.Drawing.Point(50, 370);
+            this.pbShipmentProgress.Name = "pbShipmentProgress";
+            this.pbShipmentProgress.Size = new System.Drawing.Size(500, 20);
+            this.pbShipmentProgress.TabIndex = 11;
+            this.pbShipmentProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+
             // 
             // cmbHistory
             // 
@@ -103,10 +118,12 @@
             this.cmbHistory.FormattingEnabled = true;
             this.cmbHistory.Location = new System.Drawing.Point(150, 400);
             this.cmbHistory.Name = "cmbHistory";
-            this.cmbHistory.Size = new System.Drawing.Size(300, 30);
+            this.cmbHistory.Size = new System.Drawing.Size(300, 31);
             this.cmbHistory.TabIndex = 5;
             this.cmbHistory.Text = "Search History";
+            this.cmbHistory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbHistory.SelectedIndexChanged += new System.EventHandler(this.cmbHistory_SelectedIndexChanged);
+
             // 
             // btnSave
             // 
@@ -118,6 +135,7 @@
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+
             // 
             // btnPrint
             // 
@@ -129,6 +147,7 @@
             this.btnPrint.Text = "Print";
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+
             // 
             // btnHelp
             // 
@@ -140,6 +159,7 @@
             this.btnHelp.Text = "Help";
             this.btnHelp.UseVisualStyleBackColor = true;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+
             // 
             // btnDarkMode
             // 
@@ -151,28 +171,23 @@
             this.btnDarkMode.Text = "Dark Mode";
             this.btnDarkMode.UseVisualStyleBackColor = true;
             this.btnDarkMode.Click += new System.EventHandler(this.btnDarkMode_Click);
+
             // 
             // lblClock
             // 
             this.lblClock.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold);
             this.lblClock.Location = new System.Drawing.Point(10, 500);
             this.lblClock.Name = "lblClock";
-            this.lblClock.Size = new System.Drawing.Size(200, 20);
+            this.lblClock.Size = new System.Drawing.Size(400, 20);
             this.lblClock.TabIndex = 10;
-            this.lblClock.Text = "Clock";
-            // 
-            // pbShipmentProgress
-            // 
-            this.pbShipmentProgress.Location = new System.Drawing.Point(50, 370);
-            this.pbShipmentProgress.Name = "pbShipmentProgress";
-            this.pbShipmentProgress.Size = new System.Drawing.Size(500, 20);
-            this.pbShipmentProgress.TabIndex = 11;
+            this.lblClock.Text = "Current Time: ";
+
             // 
             // frmTracking
-            // Similar initialization for Print, Help, and Dark Mode buttons
-            // ... (Add the remaining buttons with similar comments)
-
-            // Adding controls to the form and finalizing the layout
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(600, 550);
             this.Controls.Add(this.pbShipmentProgress);
             this.Controls.Add(this.lblClock);
@@ -186,14 +201,17 @@
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.txtTrackingNumber);
             this.Controls.Add(this.lblTracking);
-            // Add the rest of the controls similarly
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = true;
             this.Name = "frmTracking";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Shipment Tracking";
             this.Load += new System.EventHandler(this.frmTracking_Load);
+
+            ((System.ComponentModel.ISupportInitialize)(this.pbTrackingIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTrackingIcon)).EndInit();
-
         }
     }
 }
