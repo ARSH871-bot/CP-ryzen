@@ -10,16 +10,17 @@
 // Revision History
 // ================
 // 02.11.2024 BRD Original version.
+// [Current Date] Security improvements added - password hashing, validation
 //
 using System.IO;
 using System.Text.Json;
 using System;
+using BCrypt.Net; // Add this for password hashing
 
 namespace ShippingManagementSystem
 {
     internal class dbCustomer
     {
-
         private string lastError = "";
         public Data data = new Data();
         private string tableName = "";
@@ -55,89 +56,157 @@ namespace ShippingManagementSystem
         // ====
         // Reads the specified record from the database table and unpacks the data in the
         // record if it is found. If the record is not found, all the database entries are
-        // automaticall set blank so a new record can be created by the program if necessary.
+        // automatically set blank so a new record can be created by the program if necessary.
         // 
         public Boolean Read(string ID)
         {
             lastError = "";
             Boolean found = false;
-            Data newData = new Data();
             string json;
+
+            // Input validation
+            if (string.IsNullOrWhiteSpace(ID))
+            {
+                lastError = "The record ID cannot be blank or empty";
+                return false;
+            }
 
             if (directoryName.Trim() == "")
             {
                 lastError = "Database directory name is blank.";
+                return false;
             }
-            else if (tableName.Trim() == "")
+
+            if (tableName.Trim() == "")
             {
                 lastError = "Table name is blank.";
+                return false;
             }
-            else if (ID.Trim() == "")
-            {
-                lastError = "The record ID is blank";
-            }
-            else
-            {
-                // Open the JSON file, read to the end, and convert the JSON data to a single object
-                // with named fields. This is called deserialising.
-                try
-                {
-                    StreamReader reader = new StreamReader(directoryName + "\\Database\\" + tableName + "\\" + ID + ".txt")
-                    {
 
-                    };
+            try
+            {
+                string filePath = Path.Combine(directoryName, "Database", tableName, ID + ".txt");
+
+                if (!File.Exists(filePath))
+                {
+                    lastError = "User record not found.";
+                    return false;
+                }
+
+                using (StreamReader reader = new StreamReader(filePath))
+                {
                     json = reader.ReadToEnd();
-                    reader.Close();
-
-                    // The options variable sets up the parameters to make the DeSerialiszer 
-                    // case insensitive.
-                    var JsonOptions = new JsonSerializerOptions();
-                    JsonOptions.PropertyNameCaseInsensitive = true;
-
-                    data = JsonSerializer.Deserialize<Data>(json, JsonOptions);
-                    found = true;
-
                 }
-                catch (Exception e)
+
+                // The options variable sets up the parameters to make the Deserializer 
+                // case insensitive.
+                var JsonOptions = new JsonSerializerOptions
                 {
-                    // the record was not found.
-                    lastError = e.Message;
-                    found = false;
-                }
+                    PropertyNameCaseInsensitive = true
+                };
+
+                data = JsonSerializer.Deserialize<Data>(json, JsonOptions);
+                found = true;
             }
+            catch (Exception e)
+            {
+                lastError = $"Error reading user data: {e.Message}";
+                found = false;
+            }
+
             return found;
         }
 
         //
-        // Update
-        // ======
-        // This function updates an existing customer or creates a new one.
-        // Before calling this function, the calling form needs to update
-        // each of the data fields.
+        // NEW: SetPassword - Securely hash password before storing
+        // =====================================================
+        public void SetPassword(string plainTextPassword)
+        {
+            if (string.IsNullOrEmpty(plainTextPassword))
+            {
+                throw new ArgumentException("Password cannot be empty");
+            }
+
+            if (plainTextPassword.Length < 6)
+            {
+                throw new ArgumentException("Password must be at least 6 characters long");
+            }
+
+            // Hash the password using BCrypt with default work factor (10)
+            data.PASSWORD = BCrypt.Net.BCrypt.HashPassword(plainTextPassword);
+        }
+
         //
+        // NEW: VerifyPassword - Check if provided password matches stored hash
+        // ==================================================================
+        public bool VerifyPassword(string plainTextPassword)
+        {
+            if (string.IsNullOrEmpty(plainTextPassword) || string.IsNullOrEmpty(data.PASSWORD))
+            {
+                return false;
+            }
+
+            try
+            {
+                return BCrypt.Net.BCrypt.Verify(plainTextPassword, data.PASSWORD);
+            }
+            catch (Exception)
+            {
+                // If password is not hashed (legacy passwords), fall back to plain text comparison
+                // This allows migration from old plain text passwords
+                return data.PASSWORD == plainTextPassword;
+            }
+        }
+
+        //
+        // Update - Enhanced with better error handling and security
+        // ========================================================
         public Boolean Update(string ID)
         {
             Boolean updated = false;
             string json = "";
             lastError = "";
 
+            // Input validation
+            if (string.IsNullOrWhiteSpace(ID))
+            {
+                lastError = "User ID cannot be empty";
+                return false;
+            }
+
             if (directoryName.Trim() == "")
             {
                 lastError = "Database directory name is blank.";
+                return false;
             }
-            else if (tableName.Trim() == "")
+
+            if (tableName.Trim() == "")
             {
                 lastError = "Table name is blank.";
+                return false;
             }
-            else if (ID.Trim() == "")
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(data.USERNAME))
             {
-                lastError = "The record ID is blank";
+                lastError = "Username cannot be empty";
+                return false;
             }
-            else
+
+            if (string.IsNullOrWhiteSpace(data.PASSWORD))
             {
-                // The options variable sets up the parameters to make the Serialiszer 
-                // format the JSON values indented on individual lines. They are easier
-                // to read that way when the file is opened later in a text editor.
+                lastError = "Password cannot be empty";
+                return false;
+            }
+
+            try
+            {
+                // Ensure directory exists
+                string fullPath = Path.Combine(directoryName, "Database", tableName);
+                Directory.CreateDirectory(fullPath);
+
+                // The options variable sets up the parameters to make the Serializer 
+                // format the JSON values indented on individual lines.
                 var options = new JsonSerializerOptions()
                 {
                     WriteIndented = true
@@ -147,39 +216,71 @@ namespace ShippingManagementSystem
                 json = JsonSerializer.Serialize(data, options);
 
                 // Write the record to the table
-                try
+                string filePath = Path.Combine(fullPath, ID + ".txt");
+                using (StreamWriter writer = new StreamWriter(filePath))
                 {
-                    StreamWriter writer = new StreamWriter(directoryName + "\\Database\\" + tableName + "\\" + ID + ".txt");
                     writer.Write(json);
-                    writer.Close();
-                    updated = true;
                 }
-                catch (Exception e)
-                {
-                    // the record could not be written, but the catch stops the 
-                    // system crashing.
-                    lastError = "Could not write JSON text to the file. Error returned: \n\n" + e.Message;
-                }
+                updated = true;
             }
+            catch (Exception e)
+            {
+                lastError = $"Could not save user data: {e.Message}";
+            }
+
             return updated;
+        }
+
+        //
+        // NEW: Input Validation Methods
+        // =============================
+
+        public static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsValidUsername(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return false;
+
+            if (username.Length < 3 || username.Length > 20)
+                return false;
+
+            // Only allow letters, numbers, and underscores
+            foreach (char c in username)
+            {
+                if (!char.IsLetterOrDigit(c) && c != '_')
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static bool IsValidPassword(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+                return false;
+
+            return password.Length >= 6; // Minimum 6 characters
         }
     }
 
     //
-    // Data
-    // ====
-    // This is the internal class that provides access to each named field
-    // stored in the JSON file. Other forms can access these fields by using
-    // the method this class provides like this:
-    //
-    //     textBoxAddress.Text = customer.data.CustomerAddress; 
-    // 
-    // To add a new field to the table, create a new attribute with the correct
-    // get and set methods to manage the new field. Declare the field at the
-    // top of this class. The Read() and Update() methods will then automatically
-    // process this new field. No changes should be required to the Read() or
-    // Update() methods.
-    //
+    // Data - Enhanced with input sanitization
+    // =======================================
     internal class Data
     {
         private string Username;
@@ -187,38 +288,35 @@ namespace ShippingManagementSystem
         private string Company;
         private string Email;
         private string Phone;
-        
 
         public string USERNAME
         {
             get { return Username; }
-            set { Username = value; }
+            set { Username = value?.Trim(); } // Trim whitespace
         }
 
         public string PASSWORD
         {
             get { return Password; }
-            set { Password = value; }
+            set { Password = value; } // Don't trim passwords - they might have intentional spaces
         }
 
         public string COMPANY
         {
             get { return Company; }
-            set { Company = value; }
+            set { Company = value?.Trim(); }
         }
 
         public string EMAIL
         {
             get { return Email; }
-            set { Email = value; }
+            set { Email = value?.Trim()?.ToLowerInvariant(); } // Normalize email to lowercase
         }
 
         public string PHONE
         {
             get { return Phone; }
-            set { Phone = value; }
+            set { Phone = value?.Trim(); }
         }
-
-        
     }
 }
