@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using System.Drawing;
 
 namespace ShippingManagementSystem
 {
@@ -51,16 +52,17 @@ namespace ShippingManagementSystem
             this.btnCancelEdit = new Button();
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvShipments)).BeginInit();
+            this.pnlEditShipment.SuspendLayout();
             this.SuspendLayout();
 
             // 
             // lblManageShipments
             // 
             this.lblManageShipments.AutoSize = true;
-            this.lblManageShipments.Font = new System.Drawing.Font("Arial", 16F, System.Drawing.FontStyle.Bold);
-            this.lblManageShipments.Location = new System.Drawing.Point(30, 30);
+            this.lblManageShipments.Font = new Font("Arial", 16F, FontStyle.Bold);
+            this.lblManageShipments.Location = new Point(30, 30);
             this.lblManageShipments.Name = "lblManageShipments";
-            this.lblManageShipments.Size = new System.Drawing.Size(264, 32);
+            this.lblManageShipments.Size = new Size(264, 32);
             this.lblManageShipments.TabIndex = 0;
             this.lblManageShipments.Text = "Manage Shipments";
 
@@ -68,146 +70,165 @@ namespace ShippingManagementSystem
             // dgvShipments
             // 
             this.dgvShipments.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvShipments.Location = new System.Drawing.Point(30, 100);
+            this.dgvShipments.Location = new Point(30, 100);
             this.dgvShipments.Name = "dgvShipments";
             this.dgvShipments.RowHeadersWidth = 51;
-            this.dgvShipments.Size = new System.Drawing.Size(700, 250);
+            this.dgvShipments.Size = new Size(700, 250);
             this.dgvShipments.TabIndex = 1;
+            this.dgvShipments.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.dgvShipments.MultiSelect = false;
 
             // 
             // btnAddShipment
             // 
-            this.btnAddShipment.Location = new System.Drawing.Point(30, 370);
+            this.btnAddShipment.Location = new Point(30, 370);
             this.btnAddShipment.Name = "btnAddShipment";
-            this.btnAddShipment.Size = new System.Drawing.Size(120, 30);
+            this.btnAddShipment.Size = new Size(120, 30);
             this.btnAddShipment.TabIndex = 2;
             this.btnAddShipment.Text = "Add Shipment";
+            this.btnAddShipment.UseVisualStyleBackColor = true;
             this.btnAddShipment.Click += new System.EventHandler(this.btnAddShipment_Click);
 
             // 
             // btnEditShipment
             // 
-            this.btnEditShipment.Location = new System.Drawing.Point(160, 370);
+            this.btnEditShipment.Location = new Point(160, 370);
             this.btnEditShipment.Name = "btnEditShipment";
-            this.btnEditShipment.Size = new System.Drawing.Size(120, 30);
+            this.btnEditShipment.Size = new Size(120, 30);
             this.btnEditShipment.TabIndex = 3;
             this.btnEditShipment.Text = "Edit Shipment";
+            this.btnEditShipment.UseVisualStyleBackColor = true;
             this.btnEditShipment.Click += new System.EventHandler(this.btnEditShipment_Click);
 
             // 
             // btnDeleteShipment
             // 
-            this.btnDeleteShipment.Location = new System.Drawing.Point(290, 370);
+            this.btnDeleteShipment.Location = new Point(290, 370);
             this.btnDeleteShipment.Name = "btnDeleteShipment";
-            this.btnDeleteShipment.Size = new System.Drawing.Size(120, 30);
+            this.btnDeleteShipment.Size = new Size(120, 30);
             this.btnDeleteShipment.TabIndex = 4;
             this.btnDeleteShipment.Text = "Delete Shipment";
+            this.btnDeleteShipment.UseVisualStyleBackColor = true;
             this.btnDeleteShipment.Click += new System.EventHandler(this.btnDeleteShipment_Click);
 
             // 
             // btnViewDetails
             // 
-            this.btnViewDetails.Location = new System.Drawing.Point(420, 370);
+            this.btnViewDetails.Location = new Point(420, 370);
             this.btnViewDetails.Name = "btnViewDetails";
-            this.btnViewDetails.Size = new System.Drawing.Size(120, 30);
+            this.btnViewDetails.Size = new Size(120, 30);
             this.btnViewDetails.TabIndex = 5;
             this.btnViewDetails.Text = "View Details";
+            this.btnViewDetails.UseVisualStyleBackColor = true;
             this.btnViewDetails.Click += new System.EventHandler(this.btnViewDetails_Click);
-
-            // 
-            // cmbFilterByRole
-            // 
-            this.cmbFilterByRole.Items.AddRange(new object[] {
-            "All",
-            "Admin",
-            "Manager",
-            "Dispatcher",
-            "Employee"});
-            this.cmbFilterByRole.Location = new System.Drawing.Point(600, 30);
-            this.cmbFilterByRole.Name = "cmbFilterByRole";
-            this.cmbFilterByRole.Size = new System.Drawing.Size(150, 24);
-            this.cmbFilterByRole.TabIndex = 7;
-            this.cmbFilterByRole.SelectedIndexChanged += new System.EventHandler(this.cmbFilterByRole_SelectedIndexChanged);
 
             // 
             // lblFilter
             // 
             this.lblFilter.AutoSize = true;
-            this.lblFilter.Location = new System.Drawing.Point(505, 30);
+            this.lblFilter.Location = new Point(550, 35);
             this.lblFilter.Name = "lblFilter";
-            this.lblFilter.Size = new System.Drawing.Size(89, 16);
+            this.lblFilter.Size = new Size(89, 16);
             this.lblFilter.TabIndex = 6;
             this.lblFilter.Text = "Filter by Role:";
 
             // 
+            // cmbFilterByRole
+            // 
+            this.cmbFilterByRole.FormattingEnabled = true;
+            this.cmbFilterByRole.Location = new Point(550, 55);
+            this.cmbFilterByRole.Name = "cmbFilterByRole";
+            this.cmbFilterByRole.Size = new Size(150, 24);
+            this.cmbFilterByRole.TabIndex = 7;
+            this.cmbFilterByRole.SelectedIndexChanged += new System.EventHandler(this.cmbFilterByRole_SelectedIndexChanged);
+
+            // 
             // pnlEditShipment
             // 
-            this.pnlEditShipment.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlEditShipment.Location = new System.Drawing.Point(30, 420);
-            this.pnlEditShipment.Size = new System.Drawing.Size(700, 200);
+            this.pnlEditShipment.BorderStyle = BorderStyle.FixedSingle;
+            this.pnlEditShipment.Location = new Point(30, 420);
+            this.pnlEditShipment.Size = new Size(700, 200);
             this.pnlEditShipment.Visible = false;
-            this.pnlEditShipment.Controls.Add(new Label { Text = "Description:", Location = new System.Drawing.Point(10, 20) });
+            this.pnlEditShipment.BackColor = Color.LightGray;
+
+            // Add controls to edit panel
+            Label lblEditDescription = new Label();
+            lblEditDescription.Text = "Description:";
+            lblEditDescription.Location = new Point(10, 20);
+            lblEditDescription.Size = new Size(80, 20);
+            this.pnlEditShipment.Controls.Add(lblEditDescription);
+
+            this.txtEditDescription.Location = new Point(100, 20);
+            this.txtEditDescription.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.txtEditDescription);
-            this.pnlEditShipment.Controls.Add(new Label { Text = "Status:", Location = new System.Drawing.Point(10, 60) });
+
+            Label lblEditStatus = new Label();
+            lblEditStatus.Text = "Status:";
+            lblEditStatus.Location = new Point(10, 60);
+            lblEditStatus.Size = new Size(80, 20);
+            this.pnlEditShipment.Controls.Add(lblEditStatus);
+
+            this.cmbEditStatus.Location = new Point(100, 60);
+            this.cmbEditStatus.Size = new Size(200, 24);
             this.pnlEditShipment.Controls.Add(this.cmbEditStatus);
-            this.pnlEditShipment.Controls.Add(new Label { Text = "Destination:", Location = new System.Drawing.Point(10, 100) });
+
+            Label lblEditDestination = new Label();
+            lblEditDestination.Text = "Destination:";
+            lblEditDestination.Location = new Point(10, 100);
+            lblEditDestination.Size = new Size(80, 20);
+            this.pnlEditShipment.Controls.Add(lblEditDestination);
+
+            this.txtEditDestination.Location = new Point(100, 100);
+            this.txtEditDestination.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.txtEditDestination);
-            this.pnlEditShipment.Controls.Add(new Label { Text = "Date Shipped:", Location = new System.Drawing.Point(350, 20) });
+
+            Label lblEditDateShipped = new Label();
+            lblEditDateShipped.Text = "Date Shipped:";
+            lblEditDateShipped.Location = new Point(350, 20);
+            lblEditDateShipped.Size = new Size(100, 20);
+            this.pnlEditShipment.Controls.Add(lblEditDateShipped);
+
+            this.dtpEditDateShipped.Location = new Point(460, 20);
+            this.dtpEditDateShipped.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.dtpEditDateShipped);
-            this.pnlEditShipment.Controls.Add(new Label { Text = "Estimated Arrival:", Location = new System.Drawing.Point(350, 60) });
+
+            Label lblEditEstArrival = new Label();
+            lblEditEstArrival.Text = "Est. Arrival:";
+            lblEditEstArrival.Location = new Point(350, 60);
+            lblEditEstArrival.Size = new Size(100, 20);
+            this.pnlEditShipment.Controls.Add(lblEditEstArrival);
+
+            this.dtpEditEstimatedArrival.Location = new Point(460, 60);
+            this.dtpEditEstimatedArrival.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.dtpEditEstimatedArrival);
-            this.pnlEditShipment.Controls.Add(this.btnSaveEdit);
-            this.pnlEditShipment.Controls.Add(this.btnCancelEdit);
-
-            // 
-            // txtEditDescription
-            // 
-            this.txtEditDescription.Location = new System.Drawing.Point(120, 20);
-            this.txtEditDescription.Size = new System.Drawing.Size(200, 24);
-
-            // 
-            // cmbEditStatus
-            // 
-            this.cmbEditStatus.Items.AddRange(new object[] { "Pending", "In Transit", "Delivered" });
-            this.cmbEditStatus.Location = new System.Drawing.Point(120, 60);
-            this.cmbEditStatus.Size = new System.Drawing.Size(200, 24);
-
-            // 
-            // txtEditDestination
-            // 
-            this.txtEditDestination.Location = new System.Drawing.Point(120, 100);
-            this.txtEditDestination.Size = new System.Drawing.Size(200, 24);
-
-            // 
-            // dtpEditDateShipped
-            // 
-            this.dtpEditDateShipped.Location = new System.Drawing.Point(480, 20);
-            this.dtpEditDateShipped.Size = new System.Drawing.Size(200, 24);
-
-            // 
-            // dtpEditEstimatedArrival
-            // 
-            this.dtpEditEstimatedArrival.Location = new System.Drawing.Point(480, 60);
-            this.dtpEditEstimatedArrival.Size = new System.Drawing.Size(200, 24);
 
             // 
             // btnSaveEdit
             // 
-            this.btnSaveEdit.Text = "Save";
-            this.btnSaveEdit.Location = new System.Drawing.Point(480, 150);
+            this.btnSaveEdit.Text = "Save Changes";
+            this.btnSaveEdit.Location = new Point(460, 150);
+            this.btnSaveEdit.Size = new Size(100, 30);
+            this.btnSaveEdit.UseVisualStyleBackColor = true;
             this.btnSaveEdit.Click += new System.EventHandler(this.btnSaveEdit_Click);
+            this.pnlEditShipment.Controls.Add(this.btnSaveEdit);
 
             // 
             // btnCancelEdit
             // 
             this.btnCancelEdit.Text = "Cancel";
-            this.btnCancelEdit.Location = new System.Drawing.Point(580, 150);
+            this.btnCancelEdit.Location = new Point(570, 150);
+            this.btnCancelEdit.Size = new Size(100, 30);
+            this.btnCancelEdit.UseVisualStyleBackColor = true;
             this.btnCancelEdit.Click += new System.EventHandler(this.btnCancelEdit_Click);
+            this.pnlEditShipment.Controls.Add(this.btnCancelEdit);
 
             // 
             // frmManageShipments
             // 
-            this.ClientSize = new System.Drawing.Size(800, 650);
+            this.AutoScaleDimensions = new SizeF(8F, 16F);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.BackColor = Color.White;
+            this.ClientSize = new Size(800, 650);
             this.Controls.Add(this.lblManageShipments);
             this.Controls.Add(this.dgvShipments);
             this.Controls.Add(this.btnAddShipment);
@@ -217,11 +238,15 @@ namespace ShippingManagementSystem
             this.Controls.Add(this.lblFilter);
             this.Controls.Add(this.cmbFilterByRole);
             this.Controls.Add(this.pnlEditShipment);
+            this.FormBorderStyle = FormBorderStyle.None;
             this.Name = "frmManageShipments";
             this.Text = "Manage Shipments";
+
+            // FIXED: Changed from frmManageShipments_Load_1 to frmManageShipments_Load
             this.Load += new System.EventHandler(this.frmManageShipments_Load);
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvShipments)).EndInit();
+            this.pnlEditShipment.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
