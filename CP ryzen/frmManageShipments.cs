@@ -10,10 +10,23 @@ namespace ShippingManagementSystem
         private List<Shipment> shipments;
         private Shipment selectedShipment;
         private string currentRole;
+        private ShipmentManager shipmentManager; // Database manager
+        private User currentUser; // Track current user for database operations
 
         public frmManageShipments()
         {
             InitializeComponent();
+            shipmentManager = new ShipmentManager(); // Initialize database manager
+            InitializeShipments();
+            LoadShipmentsToGrid();
+        }
+
+        // Constructor with user parameter for better integration
+        public frmManageShipments(User user)
+        {
+            InitializeComponent();
+            shipmentManager = new ShipmentManager();
+            currentUser = user;
             InitializeShipments();
             LoadShipmentsToGrid();
         }
@@ -46,46 +59,81 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error setting up form: {ex.Message}", "Setup Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ErrorHandler.HandleException(ex, "Setup Form", true);
             }
         }
 
         private void InitializeShipments()
         {
-            shipments = new List<Shipment>
+            try
             {
-                new Shipment
+                // Load shipments from database
+                shipments = shipmentManager.GetAllShipments();
+
+                // If no shipments exist, create some sample data
+                if (shipments.Count == 0)
                 {
-                    ID = 1,
-                    Description = "Electronics to NY",
-                    Status = "In Transit",
-                    Destination = "New York",
-                    DateShipped = DateTime.Now.AddDays(-5),
-                    EstimatedArrival = DateTime.Now.AddDays(3),
-                    Role = "Dispatcher"
-                },
-                new Shipment
-                {
-                    ID = 2,
-                    Description = "Furniture to CA",
-                    Status = "Delivered",
-                    Destination = "California",
-                    DateShipped = DateTime.Now.AddDays(-10),
-                    EstimatedArrival = DateTime.Now.AddDays(-2),
-                    Role = "Manager"
-                },
-                new Shipment
-                {
-                    ID = 3,
-                    Description = "Clothing to TX",
-                    Status = "Pending",
-                    Destination = "Texas",
-                    DateShipped = DateTime.Now.AddDays(-1),
-                    EstimatedArrival = DateTime.Now.AddDays(7),
-                    Role = "Employee"
+                    CreateSampleShipments();
+                    shipments = shipmentManager.GetAllShipments(); // Reload after creating samples
                 }
-            };
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Initialize Shipments", true);
+                shipments = new List<Shipment>(); // Fallback to empty list
+            }
+        }
+
+        private void CreateSampleShipments()
+        {
+            try
+            {
+                // Get current user ID or default to admin user
+                int defaultUserId = GetCurrentUserId();
+
+                // Create sample shipments in database for demonstration
+                shipmentManager.CreateSampleShipmentsIfEmpty(defaultUserId);
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Create Sample Shipments", false);
+            }
+        }
+
+        private int GetCurrentUserId()
+        {
+            if (currentUser != null)
+            {
+                // Try to get Id property using reflection to handle different User class definitions
+                var userType = currentUser.GetType();
+                var idProperty = userType.GetProperty("Id");
+                if (idProperty != null)
+                {
+                    return (int)idProperty.GetValue(currentUser);
+                }
+            }
+
+            // Fallback: try to get admin user ID from database
+            try
+            {
+                var userManager = new UserManager();
+                var adminUser = userManager.GetUser("admin");
+                if (adminUser != null)
+                {
+                    var userType = adminUser.GetType();
+                    var idProperty = userType.GetProperty("Id");
+                    if (idProperty != null)
+                    {
+                        return (int)idProperty.GetValue(adminUser);
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors
+            }
+
+            return 1; // Default to ID 1
         }
 
         private void LoadShipmentsToGrid()
@@ -101,9 +149,9 @@ namespace ShippingManagementSystem
 
                 dgvShipments.DataSource = null;
 
-                var filteredShipments = currentRole == "All" || string.IsNullOrEmpty(currentRole)
-                    ? shipments
-                    : shipments.Where(s => s.Role == currentRole).ToList();
+                // Load shipments from database with role filter
+                var filteredShipments = shipmentManager.GetAllShipments(null, currentRole == "All" ? null : currentRole);
+                shipments = filteredShipments; // Update local list
 
                 dgvShipments.DataSource = filteredShipments;
 
@@ -112,8 +160,7 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading shipments: {ex.Message}", "Loading Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Load Shipments", true);
             }
         }
 
@@ -123,50 +170,53 @@ namespace ShippingManagementSystem
             {
                 if (dgvShipments?.Columns != null && dgvShipments.Columns.Count > 0)
                 {
-                    // Set column headers and widths safely
-                    if (dgvShipments.Columns["ID"] != null)
-                    {
-                        dgvShipments.Columns["ID"].HeaderText = "ID";
-                        dgvShipments.Columns["ID"].Width = 50;
-                    }
-                    if (dgvShipments.Columns["Description"] != null)
-                    {
-                        dgvShipments.Columns["Description"].HeaderText = "Description";
-                        dgvShipments.Columns["Description"].Width = 200;
-                    }
-                    if (dgvShipments.Columns["Status"] != null)
-                    {
-                        dgvShipments.Columns["Status"].HeaderText = "Status";
-                        dgvShipments.Columns["Status"].Width = 100;
-                    }
-                    if (dgvShipments.Columns["Destination"] != null)
-                    {
-                        dgvShipments.Columns["Destination"].HeaderText = "Destination";
-                        dgvShipments.Columns["Destination"].Width = 120;
-                    }
-                    if (dgvShipments.Columns["DateShipped"] != null)
-                    {
-                        dgvShipments.Columns["DateShipped"].HeaderText = "Date Shipped";
-                        dgvShipments.Columns["DateShipped"].Width = 100;
-                        dgvShipments.Columns["DateShipped"].DefaultCellStyle.Format = "MM/dd/yyyy";
-                    }
-                    if (dgvShipments.Columns["EstimatedArrival"] != null)
-                    {
-                        dgvShipments.Columns["EstimatedArrival"].HeaderText = "Est. Arrival";
-                        dgvShipments.Columns["EstimatedArrival"].Width = 100;
-                        dgvShipments.Columns["EstimatedArrival"].DefaultCellStyle.Format = "MM/dd/yyyy";
-                    }
-                    if (dgvShipments.Columns["Role"] != null)
-                    {
-                        dgvShipments.Columns["Role"].HeaderText = "Role";
-                        dgvShipments.Columns["Role"].Width = 80;
-                    }
+                    // Set column headers and widths safely - using database field names
+                    SetColumnIfExists("Id", "ID", 50);
+                    SetColumnIfExists("ID", "ID", 50); // Fallback for different property names
+                    SetColumnIfExists("Description", "Description", 200);
+                    SetColumnIfExists("Status", "Status", 100);
+                    SetColumnIfExists("Destination", "Destination", 120);
+                    SetColumnIfExists("DateShipped", "Date Shipped", 100, "MM/dd/yyyy");
+                    SetColumnIfExists("EstimatedArrival", "Est. Arrival", 100, "MM/dd/yyyy");
+                    SetColumnIfExists("TrackingNumber", "Tracking #", 120);
+                    SetColumnIfExists("Role", "Role", 80);
+
+                    // Hide database-specific columns that users don't need to see
+                    HideColumnIfExists("Origin");
+                    HideColumnIfExists("ActualArrival");
+                    HideColumnIfExists("Weight");
+                    HideColumnIfExists("Dimensions");
+                    HideColumnIfExists("ShippingCost");
+                    HideColumnIfExists("Notes");
+                    HideColumnIfExists("CreatedDate");
+                    HideColumnIfExists("ModifiedDate");
                 }
             }
             catch (Exception ex)
             {
                 // Don't show error for grid configuration - it's not critical
                 System.Diagnostics.Debug.WriteLine($"Grid configuration error: {ex.Message}");
+            }
+        }
+
+        private void SetColumnIfExists(string columnName, string headerText, int width, string format = null)
+        {
+            if (dgvShipments.Columns[columnName] != null)
+            {
+                dgvShipments.Columns[columnName].HeaderText = headerText;
+                dgvShipments.Columns[columnName].Width = width;
+                if (!string.IsNullOrEmpty(format))
+                {
+                    dgvShipments.Columns[columnName].DefaultCellStyle.Format = format;
+                }
+            }
+        }
+
+        private void HideColumnIfExists(string columnName)
+        {
+            if (dgvShipments.Columns[columnName] != null)
+            {
+                dgvShipments.Columns[columnName].Visible = false;
             }
         }
 
@@ -182,8 +232,7 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error filtering shipments: {ex.Message}", "Filter Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Filter Shipments", true);
             }
         }
 
@@ -191,33 +240,34 @@ namespace ShippingManagementSystem
         {
             try
             {
-                // Generate new unique ID
-                int newId = shipments.Any() ? shipments.Max(s => s.ID) + 1 : 1;
+                int defaultUserId = GetCurrentUserId();
 
-                var newShipment = new Shipment
+                // Create shipment in database
+                bool success = shipmentManager.CreateShipment(
+                    "New Shipment - Click Edit to modify",
+                    "To be determined",
+                    "Origin TBD",
+                    DateTime.Now,
+                    DateTime.Now.AddDays(5),
+                    defaultUserId,
+                    "Pending"
+                );
+
+                if (success)
                 {
-                    ID = newId,
-                    Description = "New Shipment - Click Edit to modify",
-                    Status = "Pending",
-                    Destination = "To be determined",
-                    DateShipped = DateTime.Now,
-                    EstimatedArrival = DateTime.Now.AddDays(5),
-                    Role = "Employee"
-                };
-
-                shipments.Add(newShipment);
-                LoadShipmentsToGrid();
-
-                // Select the newly added shipment
-                SelectShipmentInGrid(newShipment.ID);
-
-                MessageBox.Show("Shipment added successfully! Select it and click 'Edit' to modify details.",
-                    "Shipment Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadShipmentsToGrid(); // Refresh from database
+                    MessageBox.Show("Shipment added successfully! Select it and click 'Edit' to modify details.",
+                        "Shipment Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(shipmentManager.LastError, "Add Shipment Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error adding shipment: {ex.Message}", "Add Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Add Shipment", true);
             }
         }
 
@@ -229,7 +279,8 @@ namespace ShippingManagementSystem
                 {
                     foreach (DataGridViewRow row in dgvShipments.Rows)
                     {
-                        if (row.DataBoundItem is Shipment shipment && shipment.ID == shipmentId)
+                        if (row.DataBoundItem is Shipment shipment &&
+                            (shipment.ID == shipmentId || GetShipmentId(shipment) == shipmentId))
                         {
                             row.Selected = true;
                             if (row.Cells.Count > 0)
@@ -245,6 +296,18 @@ namespace ShippingManagementSystem
             {
                 // Ignore selection errors - not critical
             }
+        }
+
+        private int GetShipmentId(Shipment shipment)
+        {
+            // Handle both ID and Id property names
+            var shipmentType = shipment.GetType();
+            var idProperty = shipmentType.GetProperty("Id") ?? shipmentType.GetProperty("ID");
+            if (idProperty != null)
+            {
+                return (int)idProperty.GetValue(shipment);
+            }
+            return shipment.ID; // Fallback to existing property
         }
 
         private void btnEditShipment_Click(object sender, EventArgs e)
@@ -286,8 +349,7 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error opening edit panel: {ex.Message}", "Edit Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Edit Shipment", true);
             }
         }
 
@@ -331,25 +393,38 @@ namespace ShippingManagementSystem
                         return;
                     }
 
-                    // Update shipment
-                    selectedShipment.Description = txtEditDescription.Text.Trim();
-                    selectedShipment.Status = cmbEditStatus.SelectedItem.ToString();
-                    selectedShipment.Destination = txtEditDestination.Text.Trim();
-                    selectedShipment.DateShipped = dtpEditDateShipped.Value;
-                    selectedShipment.EstimatedArrival = dtpEditEstimatedArrival.Value;
+                    // Update shipment in database
+                    int shipmentId = GetShipmentId(selectedShipment);
 
-                    LoadShipmentsToGrid();
-                    if (pnlEditShipment != null)
-                        pnlEditShipment.Visible = false;
+                    bool success = shipmentManager.UpdateShipment(
+                        shipmentId,
+                        txtEditDescription.Text.Trim(),
+                        cmbEditStatus.SelectedItem.ToString(),
+                        txtEditDestination.Text.Trim(),
+                        dtpEditDateShipped.Value,
+                        dtpEditEstimatedArrival.Value,
+                        selectedShipment.Role
+                    );
 
-                    MessageBox.Show("Shipment updated successfully!", "Edit Shipment",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (success)
+                    {
+                        LoadShipmentsToGrid(); // Refresh from database
+                        if (pnlEditShipment != null)
+                            pnlEditShipment.Visible = false;
+
+                        MessageBox.Show("Shipment updated successfully!", "Edit Shipment",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(shipmentManager.LastError, "Update Failed",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving shipment: {ex.Message}", "Save Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Save Shipment", true);
             }
         }
 
@@ -367,17 +442,27 @@ namespace ShippingManagementSystem
                 if (dgvShipments?.CurrentRow?.DataBoundItem is Shipment)
                 {
                     var shipment = (Shipment)dgvShipments.CurrentRow.DataBoundItem;
+                    int shipmentId = GetShipmentId(shipment);
 
                     var result = MessageBox.Show(
-                        $"Are you sure you want to delete this shipment?\n\nID: {shipment.ID}\nDescription: {shipment.Description}\nDestination: {shipment.Destination}",
+                        $"Are you sure you want to delete this shipment?\n\nID: {shipmentId}\nDescription: {shipment.Description}\nDestination: {shipment.Destination}",
                         "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (result == DialogResult.Yes)
                     {
-                        shipments.Remove(shipment);
-                        LoadShipmentsToGrid();
-                        MessageBox.Show("Shipment deleted successfully!", "Delete Shipment",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        bool success = shipmentManager.DeleteShipment(shipmentId);
+
+                        if (success)
+                        {
+                            LoadShipmentsToGrid(); // Refresh from database
+                            MessageBox.Show("Shipment deleted successfully!", "Delete Shipment",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show(shipmentManager.LastError, "Delete Failed",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 else
@@ -388,8 +473,7 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error deleting shipment: {ex.Message}", "Delete Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Delete Shipment", true);
             }
         }
 
@@ -400,15 +484,27 @@ namespace ShippingManagementSystem
                 if (dgvShipments?.CurrentRow?.DataBoundItem is Shipment)
                 {
                     var shipment = (Shipment)dgvShipments.CurrentRow.DataBoundItem;
+                    int shipmentId = GetShipmentId(shipment);
 
                     string details = $"Shipment Details:\n\n" +
-                                   $"ID: {shipment.ID}\n" +
+                                   $"ID: {shipmentId}\n" +
                                    $"Description: {shipment.Description}\n" +
                                    $"Status: {shipment.Status}\n" +
                                    $"Destination: {shipment.Destination}\n" +
                                    $"Date Shipped: {shipment.DateShipped:MM/dd/yyyy}\n" +
                                    $"Estimated Arrival: {shipment.EstimatedArrival:MM/dd/yyyy}\n" +
                                    $"Assigned Role: {shipment.Role}";
+
+                    // Add tracking number if available
+                    var trackingProperty = shipment.GetType().GetProperty("TrackingNumber");
+                    if (trackingProperty != null)
+                    {
+                        var trackingNumber = trackingProperty.GetValue(shipment)?.ToString();
+                        if (!string.IsNullOrEmpty(trackingNumber))
+                        {
+                            details += $"\nTracking Number: {trackingNumber}";
+                        }
+                    }
 
                     MessageBox.Show(details, "Shipment Details", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -420,8 +516,7 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error viewing shipment details: {ex.Message}", "View Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "View Details", true);
             }
         }
 
@@ -436,15 +531,23 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error initializing shipments form: {ex.Message}", "Initialization Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Initialize Form", true);
             }
         }
 
         // Method to refresh data (useful when called from parent dashboard)
         public void RefreshData()
         {
-            LoadShipmentsToGrid();
+            try
+            {
+                shipments = shipmentManager.GetAllShipments();
+                LoadShipmentsToGrid();
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Refresh Data", false);
+                LoadShipmentsToGrid(); // Use existing data
+            }
         }
 
         // Method to get shipment count for dashboard summary
@@ -456,13 +559,19 @@ namespace ShippingManagementSystem
         // Method to get shipments by status for dashboard summary  
         public Dictionary<string, int> GetShipmentsByStatus()
         {
-            if (shipments == null) return new Dictionary<string, int>();
-
-            return shipments.GroupBy(s => s.Status)
-                           .ToDictionary(g => g.Key, g => g.Count());
+            try
+            {
+                return shipmentManager.GetShipmentsByStatus();
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Get Shipments by Status", false);
+                return new Dictionary<string, int>();
+            }
         }
     }
 
+    // Keep the existing Shipment class as-is to avoid conflicts
     public class Shipment
     {
         public int ID { get; set; }
