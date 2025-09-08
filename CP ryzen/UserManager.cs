@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using System.Security;
 
 namespace ShippingManagementSystem
 {
     /// <summary>
-    /// Simplified user manager using existing infrastructure
+    /// Database-driven user manager using MySQL DatabaseManager
+    /// Compatible with existing User class definition
     /// </summary>
     public class UserManager
     {
-        private dbCustomer customerDb;
+        private readonly DatabaseManager dbManager;
         public string LastError { get; private set; } = "";
 
         public UserManager()
         {
-            customerDb = new dbCustomer();
+            dbManager = new DatabaseManager(); // Use MySQL database instead of JSON files
         }
 
         /// <summary>
-        /// Register user with enhanced password validation
+        /// Register user with enhanced password validation and database storage
         /// </summary>
         public bool RegisterUser(string username, string password, string email = "",
                                string phone = "", string company = "", string role = "Employee")
@@ -41,29 +40,49 @@ namespace ShippingManagementSystem
                     return false;
                 }
 
-                // Check if user exists
-                if (customerDb.Read(username))
+                // Check if user exists in database
+                if (UserExists(username))
                 {
                     LastError = "Username already exists.";
                     return false;
                 }
 
-                // Set user data with hashed password
-                customerDb.data.USERNAME = username;
-                customerDb.data.PASSWORD = SecurityManager.HashPassword(password);
-                customerDb.data.EMAIL = email;
-                customerDb.data.PHONE = phone;
-                customerDb.data.COMPANY = company;
-
-                // Save to database
-                if (customerDb.Update(username))
+                // Check if email already exists (if provided)
+                if (!string.IsNullOrEmpty(email) && EmailExists(email))
                 {
-                    ErrorHandler.LogInfo($"User registered: {username}", "UserManager");
+                    LastError = "Email address already registered.";
+                    return false;
+                }
+
+                // Hash password for secure storage
+                string hashedPassword = SecurityManager.HashPassword(password);
+
+                // Insert user into database
+                string sql = @"
+                    INSERT INTO Users (Username, PasswordHash, Email, Phone, Company, Role, CreatedDate)
+                    VALUES (@username, @passwordHash, @email, @phone, @company, @role, @createdDate)";
+
+                var parameters = new Dictionary<string, object>
+                {
+                    {"@username", username},
+                    {"@passwordHash", hashedPassword},
+                    {"@email", email ?? ""},
+                    {"@phone", phone ?? ""},
+                    {"@company", company ?? ""},
+                    {"@role", role},
+                    {"@createdDate", DateTime.Now}
+                };
+
+                int result = dbManager.ExecuteNonQuery(sql, parameters);
+
+                if (result > 0)
+                {
+                    ErrorHandler.LogInfo($"User registered successfully in database: {username}", "UserManager");
                     return true;
                 }
                 else
                 {
-                    LastError = "Failed to save user data.";
+                    LastError = "Failed to save user data to database.";
                     return false;
                 }
             }
@@ -76,7 +95,7 @@ namespace ShippingManagementSystem
         }
 
         /// <summary>
-        /// Authenticate user with security features
+        /// Authenticate user with database lookup and security features
         /// </summary>
         public User AuthenticateUser(string username, string password)
         {
@@ -96,54 +115,53 @@ namespace ShippingManagementSystem
                     return null;
                 }
 
-                // Read user data
-                if (!customerDb.Read(username))
+                // Query database for user
+                string sql = @"
+                    SELECT Id, Username, PasswordHash, Email, Phone, Company, Role, IsActive, LastLogin,
+                           FailedLoginAttempts, AccountLockedUntil
+                    FROM Users 
+                    WHERE Username = @username AND IsActive = 1";
+
+                var parameters = new Dictionary<string, object>
+                {
+                    {"@username", username}
+                };
+
+                DataTable result = dbManager.ExecuteQuery(sql, parameters);
+
+                if (result.Rows.Count == 0)
                 {
                     LastError = "Invalid username or password.";
                     SecurityManager.RecordFailedAttempt(username);
                     return null;
                 }
 
-                // Verify password
-                bool isValidPassword = false;
+                DataRow row = result.Rows[0];
+                string storedHash = row["PasswordHash"].ToString();
 
-                // Check if password is hashed (newer accounts) or plain text (legacy)
-                if (customerDb.data.PASSWORD.Contains("=") || customerDb.data.PASSWORD.Length > 20)
-                {
-                    // Hashed password
-                    isValidPassword = SecurityManager.VerifyPassword(password, customerDb.data.PASSWORD);
-                }
-                else
-                {
-                    // Legacy plain text password - upgrade it
-                    if (customerDb.data.PASSWORD == password)
-                    {
-                        isValidPassword = true;
-                        // Upgrade to hashed password
-                        customerDb.data.PASSWORD = SecurityManager.HashPassword(password);
-                        customerDb.Update(username);
-                        ErrorHandler.LogInfo($"Upgraded password security for: {username}", "UserManager");
-                    }
-                }
+                // Verify password against stored hash
+                bool isValidPassword = SecurityManager.VerifyPassword(password, storedHash);
 
                 if (!isValidPassword)
                 {
                     LastError = "Invalid username or password.";
                     SecurityManager.RecordFailedAttempt(username);
+
+                    // Update failed login attempts in database
+                    UpdateFailedLoginAttempts(Convert.ToInt32(row["Id"]));
                     return null;
                 }
 
                 // Clear failed attempts on successful login
                 SecurityManager.ClearFailedAttempts(username);
 
-                // Create and return user object
-                var user = new User
-                {
-                    Username = customerDb.data.USERNAME,
-                    Role = "Admin" // Default role
-                };
+                // Update last login time in database
+                UpdateLastLogin(Convert.ToInt32(row["Id"]));
 
-                ErrorHandler.LogInfo($"User authenticated: {username}", "UserManager");
+                // Create User object using existing User class definition
+                var user = CreateUserFromDataRow(row);
+
+                ErrorHandler.LogInfo($"User authenticated successfully from database: {username}", "UserManager");
                 return user;
             }
             catch (Exception ex)
@@ -155,19 +173,172 @@ namespace ShippingManagementSystem
         }
 
         /// <summary>
-        /// Verify password for compatibility
+        /// Create User object from database row, compatible with existing User class
         /// </summary>
-        public bool VerifyPassword(string password)
+        private User CreateUserFromDataRow(DataRow row)
         {
-            return SecurityManager.VerifyPassword(password, customerDb.data.PASSWORD);
+            var user = new User();
+
+            // Use reflection to safely set properties that exist in your User class
+            var userType = typeof(User);
+
+            // Set Username property
+            var usernameProperty = userType.GetProperty("Username");
+            if (usernameProperty != null)
+            {
+                usernameProperty.SetValue(user, row["Username"].ToString());
+            }
+
+            // Set Role property  
+            var roleProperty = userType.GetProperty("Role");
+            if (roleProperty != null)
+            {
+                roleProperty.SetValue(user, row["Role"].ToString());
+            }
+
+            // Try to set other properties if they exist
+            TrySetProperty(user, "Email", row["Email"].ToString());
+            TrySetProperty(user, "Phone", row["Phone"].ToString());
+            TrySetProperty(user, "Company", row["Company"].ToString());
+
+            // Try to set Id if it exists
+            TrySetProperty(user, "Id", Convert.ToInt32(row["Id"]));
+
+            return user;
         }
 
         /// <summary>
-        /// Read user for compatibility
+        /// Safely set property using reflection
         /// </summary>
-        public bool Read(string username)
+        private void TrySetProperty(object obj, string propertyName, object value)
         {
-            return customerDb.Read(username);
+            try
+            {
+                var property = obj.GetType().GetProperty(propertyName);
+                if (property != null && property.CanWrite)
+                {
+                    property.SetValue(obj, value);
+                }
+            }
+            catch
+            {
+                // Ignore if property doesn't exist or can't be set
+            }
+        }
+
+        #region Database Helper Methods
+
+        /// <summary>
+        /// Check if username exists in database
+        /// </summary>
+        private bool UserExists(string username)
+        {
+            string sql = "SELECT COUNT(*) FROM Users WHERE Username = @username";
+            var parameters = new Dictionary<string, object> { { "@username", username } };
+
+            object result = dbManager.ExecuteScalar(sql, parameters);
+            return Convert.ToInt32(result) > 0;
+        }
+
+        /// <summary>
+        /// Check if email exists in database
+        /// </summary>
+        private bool EmailExists(string email)
+        {
+            string sql = "SELECT COUNT(*) FROM Users WHERE Email = @email AND Email != ''";
+            var parameters = new Dictionary<string, object> { { "@email", email } };
+
+            object result = dbManager.ExecuteScalar(sql, parameters);
+            return Convert.ToInt32(result) > 0;
+        }
+
+        /// <summary>
+        /// Update last login time in database
+        /// </summary>
+        private void UpdateLastLogin(int userId)
+        {
+            try
+            {
+                string sql = "UPDATE Users SET LastLogin = @lastLogin WHERE Id = @userId";
+                var parameters = new Dictionary<string, object>
+                {
+                    {"@lastLogin", DateTime.Now},
+                    {"@userId", userId}
+                };
+
+                dbManager.ExecuteNonQuery(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Update Last Login", false);
+            }
+        }
+
+        /// <summary>
+        /// Update failed login attempts in database
+        /// </summary>
+        private void UpdateFailedLoginAttempts(int userId)
+        {
+            try
+            {
+                string sql = @"
+                    UPDATE Users 
+                    SET FailedLoginAttempts = FailedLoginAttempts + 1,
+                        LastFailedLogin = @lastFailedLogin,
+                        AccountLockedUntil = CASE 
+                            WHEN FailedLoginAttempts + 1 >= 5 THEN DATE_ADD(NOW(), INTERVAL 30 MINUTE)
+                            ELSE AccountLockedUntil
+                        END
+                    WHERE Id = @userId";
+
+                var parameters = new Dictionary<string, object>
+                {
+                    {"@lastFailedLogin", DateTime.Now},
+                    {"@userId", userId}
+                };
+
+                dbManager.ExecuteNonQuery(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Update Failed Login Attempts", false);
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Test database connectivity
+        /// </summary>
+        public bool TestConnection()
+        {
+            return dbManager.TestConnection();
+        }
+
+        /// <summary>
+        /// Get user by username for compatibility
+        /// </summary>
+        public User GetUser(string username)
+        {
+            try
+            {
+                string sql = "SELECT Id, Username, Email, Phone, Company, Role FROM Users WHERE Username = @username";
+                var parameters = new Dictionary<string, object> { { "@username", username } };
+
+                DataTable result = dbManager.ExecuteQuery(sql, parameters);
+
+                if (result.Rows.Count > 0)
+                {
+                    return CreateUserFromDataRow(result.Rows[0]);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Get User", false);
+                return null;
+            }
         }
     }
 }

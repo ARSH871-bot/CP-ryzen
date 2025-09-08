@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -8,11 +9,92 @@ namespace ShippingManagementSystem
     public partial class frmRegister : Form
     {
         private UserManager userManager; // Enhanced user manager with security features
+        private bool isUserManagerAvailable = false;
 
         public frmRegister()
         {
             InitializeComponent();
-            userManager = new UserManager(); // Initialize enhanced UserManager
+            InitializeUserManager();
+        }
+
+        /// <summary>
+        /// Initialize UserManager with detailed error reporting
+        /// </summary>
+        private void InitializeUserManager()
+        {
+            try
+            {
+                userManager = new UserManager();
+                isUserManagerAvailable = true;
+
+                // Show success message on form load
+                this.Load += (s, e) => ShowDatabaseStatus();
+            }
+            catch (Exception ex)
+            {
+                isUserManagerAvailable = false;
+                userManager = null;
+
+                // Show detailed error on form load
+                this.Load += (s, e) => {
+                    MessageBox.Show($"UserManager initialization failed:\n\n{ex.Message}\n\n" +
+                                  "Using fallback registration system (JSON files).\n" +
+                                  "Users will be stored locally instead of MySQL database.",
+                        "Database Connection Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                };
+            }
+        }
+
+        /// <summary>
+        /// Show database connection status when form loads
+        /// </summary>
+        private void ShowDatabaseStatus()
+        {
+            string statusMessage = "";
+
+            if (isUserManagerAvailable)
+            {
+                statusMessage = "✓ MySQL Database Connection: ACTIVE\n" +
+                              "✓ Users will be stored in XAMPP database\n" +
+                              "✓ Enhanced security features enabled";
+
+                // Test actual connection
+                try
+                {
+                    var dbManager = new DatabaseManager();
+                    bool connected = dbManager.TestConnection();
+
+                    if (!connected)
+                    {
+                        statusMessage = "⚠ MySQL Database: CONNECTION FAILED\n" +
+                                      "• XAMPP MySQL may not be running\n" +
+                                      "• Falling back to local file storage";
+                        isUserManagerAvailable = false;
+                        userManager = null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    statusMessage = $"⚠ Database Error: {ex.Message}\n" +
+                                  "• Falling back to local file storage";
+                    isUserManagerAvailable = false;
+                    userManager = null;
+                }
+            }
+            else
+            {
+                statusMessage = "⚠ MySQL Database: NOT AVAILABLE\n" +
+                              "• Using local file storage (JSON)\n" +
+                              "• Basic security features only";
+            }
+
+            // Update form title to show status
+            this.Text = isUserManagerAvailable ?
+                "Registration - MySQL Database" :
+                "Registration - Local Storage";
+
+            // Optional: Show status message (comment out if too intrusive)
+            // MessageBox.Show(statusMessage, "Database Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnRegister_Click(object sender, EventArgs e)
@@ -57,8 +139,8 @@ namespace ShippingManagementSystem
                     return;
                 }
 
-                // Enhanced password strength validation
-                if (!SecurityManager.ValidatePasswordStrength(password))
+                // Enhanced password strength validation (with fallback)
+                if (SecurityManagerExists() && !SecurityManager.ValidatePasswordStrength(password))
                 {
                     MessageBox.Show($"Password does not meet security requirements:\n\n{SecurityManager.GetPasswordRequirements()}",
                         "Weak Password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -67,8 +149,34 @@ namespace ShippingManagementSystem
                     return;
                 }
 
-                // Use UserManager for secure registration with email integration
-                if (userManager.RegisterUser(username, password, email, phone, companyName, role))
+                // Registration with detailed system tracking
+                bool registrationResult = false;
+                string systemUsed = "";
+
+                if (isUserManagerAvailable && userManager != null)
+                {
+                    // Try MySQL database registration
+                    registrationResult = userManager.RegisterUser(username, password, email, phone, companyName, role);
+                    systemUsed = "MySQL Database";
+
+                    if (!registrationResult)
+                    {
+                        // Show detailed MySQL error and try fallback
+                        MessageBox.Show($"MySQL Database registration failed:\n{userManager.LastError}\n\nAttempting fallback to local storage...",
+                            "Database Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        registrationResult = RegisterWithFallback(username, password, email, phone, companyName, role);
+                        systemUsed = "Local Files (Fallback)";
+                    }
+                }
+                else
+                {
+                    // Use fallback registration system directly
+                    registrationResult = RegisterWithFallback(username, password, email, phone, companyName, role);
+                    systemUsed = "Local Files";
+                }
+
+                if (registrationResult)
                 {
                     // Send welcome email asynchronously if email provided
                     if (!string.IsNullOrEmpty(email))
@@ -78,51 +186,68 @@ namespace ShippingManagementSystem
                             try
                             {
                                 bool emailSent = await EmailManager.SendWelcomeEmail(email, username, role, companyName);
-                                if (emailSent)
+                                if (emailSent && ErrorHandlerExists())
                                 {
                                     ErrorHandler.LogInfo($"Welcome email sent to {email} for user {username}", "Registration");
                                 }
                             }
                             catch (Exception ex)
                             {
-                                ErrorHandler.HandleException(ex, "Send Welcome Email", false);
+                                if (ErrorHandlerExists())
+                                {
+                                    ErrorHandler.HandleException(ex, "Send Welcome Email", false);
+                                }
                             }
                         });
                     }
 
-                    MessageBox.Show("Registration successful!\n\n" +
-                                  "Security Features Enabled:\n" +
-                                  "• Your password has been securely encrypted\n" +
-                                  "• Account lockout protection activated\n" +
-                                  "• Login attempts will be monitored\n\n" +
-                                  (!string.IsNullOrEmpty(email) ? "• Welcome email sent to " + email + "\n\n" : "") +
-                                  "You can now login with your credentials.",
-                        "Registration Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Success message with system information
+                    string successMessage = $"Registration successful!\n\nSystem Used: {systemUsed}\n\n";
 
-                    // Log successful registration
-                    ErrorHandler.LogInfo($"New user registered: {username}", "Registration");
+                    if (systemUsed.Contains("MySQL"))
+                    {
+                        successMessage += "✓ User stored in XAMPP MySQL database\n" +
+                                        "✓ Password securely encrypted\n" +
+                                        "✓ Enhanced security features active\n";
+                    }
+                    else
+                    {
+                        successMessage += "✓ User stored in local files\n" +
+                                        "✓ Basic security features active\n";
+                    }
+
+                    successMessage += (!string.IsNullOrEmpty(email) ? "✓ Welcome email sent\n\n" : "\n") +
+                                    "You can now login with your credentials.";
+
+                    MessageBox.Show(successMessage, "Registration Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Log successful registration with system details
+                    if (ErrorHandlerExists())
+                    {
+                        ErrorHandler.LogInfo($"New user registered: {username} using {systemUsed}", "Registration");
+                    }
 
                     this.Hide();
                     new frmLogin().Show();
                 }
                 else
                 {
-                    // Show specific error message from UserManager
-                    MessageBox.Show(userManager.LastError, "Registration Failed",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Show specific error message
+                    string errorMsg = userManager?.LastError ?? "Registration failed with unknown error.";
+                    MessageBox.Show($"Registration failed:\n\n{errorMsg}", "Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     // Focus appropriate field based on error
-                    if (userManager.LastError.Contains("username") || userManager.LastError.Contains("Username"))
+                    if (errorMsg.Contains("username") || errorMsg.Contains("Username"))
                     {
                         txtUsername.Focus();
                         txtUsername.SelectAll();
                     }
-                    else if (userManager.LastError.Contains("email") || userManager.LastError.Contains("Email"))
+                    else if (errorMsg.Contains("email") || errorMsg.Contains("Email"))
                     {
                         txtEmail.Focus();
                         txtEmail.SelectAll();
                     }
-                    else if (userManager.LastError.Contains("password") || userManager.LastError.Contains("Password"))
+                    else if (errorMsg.Contains("password") || errorMsg.Contains("Password"))
                     {
                         txtPassword.Focus();
                         txtPassword.SelectAll();
@@ -131,12 +256,166 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                ErrorHandler.HandleException(ex, "User Registration");
+                if (ErrorHandlerExists())
+                {
+                    ErrorHandler.HandleException(ex, "User Registration");
+                }
+                else
+                {
+                    MessageBox.Show($"Registration error: {ex.Message}", "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
 
                 // Clear sensitive fields on error
                 txtPassword.Clear();
                 txtConfirmPassword.Clear();
                 txtUsername.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Fallback registration using dbCustomer system with detailed tracking
+        /// </summary>
+        private bool RegisterWithFallback(string username, string password, string email, string phone, string companyName, string role)
+        {
+            try
+            {
+                var customerDb = new dbCustomer();
+
+                // Check if user already exists
+                if (customerDb.Read(username))
+                {
+                    MessageBox.Show("A user with this username already exists in the local storage system.",
+                        "Username Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
+
+                // Set user data (with password hashing if SecurityManager exists)
+                customerDb.data.USERNAME = username;
+                customerDb.data.PASSWORD = SecurityManagerExists() ? SecurityManager.HashPassword(password) : password;
+                customerDb.data.EMAIL = email;
+                customerDb.data.PHONE = phone;
+                customerDb.data.COMPANY = companyName;
+
+                // Save to local JSON file
+                bool result = customerDb.Update(username);
+
+                if (result && ErrorHandlerExists())
+                {
+                    ErrorHandler.LogInfo($"User {username} saved to local storage at: {Path.Combine(Directory.GetCurrentDirectory(), "Database", "customer")}", "Fallback Registration");
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fallback registration failed: {ex.Message}\n\nPlease check file permissions and try again.",
+                    "Fallback Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Manual database test for troubleshooting
+        /// </summary>
+        private void TestDatabaseManually()
+        {
+            string result = "=== COMPREHENSIVE DATABASE TEST ===\n\n";
+
+            try
+            {
+                // Test 1: Check if classes exist
+                result += "Component Availability:\n";
+                result += $"• UserManager: {(userManager != null ? "✓ Available" : "✗ Missing")}\n";
+
+                try
+                {
+                    var dbManager = new DatabaseManager();
+                    result += "• DatabaseManager: ✓ Available\n";
+
+                    // Test connection
+                    bool connected = dbManager.TestConnection();
+                    result += $"• Database Connection: {(connected ? "✓ SUCCESS" : "✗ FAILED")}\n\n";
+
+                    if (connected)
+                    {
+                        result += "MySQL Database Details:\n";
+                        result += "• Server: localhost:3306\n";
+                        result += "• Database: shipping_management\n";
+                        result += "• Table: users\n\n";
+                    }
+                    else
+                    {
+                        result += "Connection Issues:\n";
+                        result += "• Check XAMPP MySQL is running\n";
+                        result += "• Verify port 3306 is available\n";
+                        result += "• Check firewall settings\n\n";
+                    }
+                }
+                catch (Exception dbEx)
+                {
+                    result += $"• DatabaseManager: ✗ ERROR - {dbEx.Message}\n\n";
+                }
+
+                // Test 2: Check current storage locations
+                result += "Storage Locations:\n";
+                string localDbPath = Path.Combine(Directory.GetCurrentDirectory(), "Database", "customer");
+                result += $"• Local Storage: {localDbPath}\n";
+                result += $"• Local Files Exist: {(Directory.Exists(localDbPath) ? "✓ Yes" : "✗ No")}\n\n";
+
+                // Test 3: Try test registration
+                result += "Registration Test:\n";
+                if (userManager != null)
+                {
+                    string testUser = "test_" + DateTime.Now.Ticks;
+                    bool testResult = userManager.RegisterUser(testUser, "TestPass123", "test@test.com", "", "Test Company", "Employee");
+                    result += $"• MySQL Test: {(testResult ? "✓ SUCCESS" : "✗ FAILED")}\n";
+                    if (!testResult)
+                    {
+                        result += $"  Error: {userManager.LastError}\n";
+                    }
+                }
+                else
+                {
+                    result += "• MySQL Test: ✗ UserManager not available\n";
+                }
+
+                MessageBox.Show(result, "Database Test Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Database test failed: {ex.Message}", "Test Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Check if SecurityManager exists
+        /// </summary>
+        private bool SecurityManagerExists()
+        {
+            try
+            {
+                SecurityManager.ValidatePasswordStrength("test");
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Check if ErrorHandler exists
+        /// </summary>
+        private bool ErrorHandlerExists()
+        {
+            try
+            {
+                ErrorHandler.LogInfo("Test", "Test");
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -172,27 +451,18 @@ namespace ShippingManagementSystem
 
             // Set focus to username field
             txtUsername.Focus();
-
-            // Show password requirements hint
-            this.Text = "Registration - Strong Password Required";
         }
 
         private void pictureBoxLogo_Click(object sender, EventArgs e)
         {
-            // Show password requirements when logo is clicked
-            MessageBox.Show($"Password Security Requirements:\n\n{SecurityManager.GetPasswordRequirements()}\n\n" +
-                          "Additional Security Features:\n" +
-                          "• Automatic account lockout after failed attempts\n" +
-                          "• Secure password encryption\n" +
-                          "• Login monitoring and logging",
-                "Security Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Show database test instead of security info
+            TestDatabaseManually();
         }
 
-        // Add real-time password strength feedback
+        // Real-time validation methods with safety checks
         private void txtPassword_TextChanged(object sender, EventArgs e)
         {
-            // Optional: Real-time password strength feedback
-            if (txtPassword.Text.Length > 0)
+            if (SecurityManagerExists() && txtPassword.Text.Length > 0)
             {
                 if (SecurityManager.ValidatePasswordStrength(txtPassword.Text))
                 {
@@ -211,7 +481,6 @@ namespace ShippingManagementSystem
 
         private void txtConfirmPassword_TextChanged(object sender, EventArgs e)
         {
-            // Optional: Real-time password match feedback
             if (txtConfirmPassword.Text.Length > 0)
             {
                 if (txtPassword.Text == txtConfirmPassword.Text)
@@ -231,7 +500,6 @@ namespace ShippingManagementSystem
 
         private void txtUsername_TextChanged(object sender, EventArgs e)
         {
-            // Optional: Real-time username validation feedback
             if (txtUsername.Text.Length > 0)
             {
                 if (txtUsername.Text.Length >= 3 && txtUsername.Text.Length <= 20)
@@ -251,7 +519,6 @@ namespace ShippingManagementSystem
 
         private void txtEmail_TextChanged(object sender, EventArgs e)
         {
-            // Optional: Real-time email validation feedback
             if (txtEmail.Text.Length > 0)
             {
                 if (IsValidEmail(txtEmail.Text))
