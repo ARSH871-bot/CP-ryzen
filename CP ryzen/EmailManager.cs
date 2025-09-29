@@ -74,6 +74,65 @@ namespace ShippingManagementSystem
             }
         }
 
+        public static async Task<bool> SendShipmentStatusUpdateEmail(string toEmail, Shipment shipment)
+        {
+            try
+            {
+                if (!IsValidEmail(toEmail)) return false;
+
+                string subject = $"Shipment Status Update - #{shipment.ID}";
+                string body = GenerateStatusUpdateEmailBody(shipment);
+
+                return await SendEmailAsync(toEmail, subject, body, EmailPriority.Normal, "Status Update");
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Send Status Update Email", false);
+                return false;
+            }
+        }
+
+        public static async Task<bool> SendDeliveryConfirmationEmail(string toEmail, Shipment shipment)
+        {
+            try
+            {
+                if (!IsValidEmail(toEmail)) return false;
+
+                string subject = $"Package Delivered - #{shipment.ID}";
+                string body = GenerateDeliveryEmailBody(shipment);
+
+                return await SendEmailAsync(toEmail, subject, body, EmailPriority.High, "Delivery Confirmation");
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Send Delivery Email", false);
+                return false;
+            }
+        }
+
+        public static async Task<bool> SendShipmentUpdatedEmail(string toEmail, Shipment shipment)
+        {
+            try
+            {
+                if (!IsValidEmail(toEmail)) return false;
+
+                string subject = $"Shipment Information Updated - #{shipment.ID}";
+                string body = GenerateShipmentUpdateEmailBody(shipment);
+
+                return await SendEmailAsync(toEmail, subject, body, EmailPriority.Normal, "Shipment Updated");
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.HandleException(ex, "Send Updated Email", false);
+                return false;
+            }
+        }
+
+        public static bool IsInSimulationMode()
+        {
+            return IsSimulationMode;
+        }
+
         private static async Task<bool> SendEmailAsync(string toEmail, string subject, string body, EmailPriority priority, string context)
         {
             try
@@ -187,6 +246,49 @@ namespace ShippingManagementSystem
                     <p>A new shipment has been created:</p>
                     <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px;'>
                         <p><strong>ID:</strong> #{shipment.ID}</p>
+                        <p><strong>Description:</strong> {shipment.Description}</p>
+                        <p><strong>Status:</strong> {shipment.Status}</p>
+                        <p><strong>Destination:</strong> {shipment.Destination}</p>
+                    </div>
+                </body>
+                </html>";
+        }
+
+        private static string GenerateStatusUpdateEmailBody(Shipment shipment)
+        {
+            return $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; padding: 20px;'>
+                    <h2 style='color: #3498db;'>Shipment Status Updated</h2>
+                    <p>Shipment #{shipment.ID} status has been updated to: <strong>{shipment.Status}</strong></p>
+                    <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px;'>
+                        <p><strong>Description:</strong> {shipment.Description}</p>
+                        <p><strong>Destination:</strong> {shipment.Destination}</p>
+                    </div>
+                </body>
+                </html>";
+        }
+
+        private static string GenerateDeliveryEmailBody(Shipment shipment)
+        {
+            return $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; padding: 20px;'>
+                    <h2 style='color: #27ae60;'>Package Delivered Successfully!</h2>
+                    <p>Your shipment #{shipment.ID} has been delivered to {shipment.Destination}.</p>
+                    <p>Thank you for using {CompanyName}!</p>
+                </body>
+                </html>";
+        }
+
+        private static string GenerateShipmentUpdateEmailBody(Shipment shipment)
+        {
+            return $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; padding: 20px;'>
+                    <h2>Shipment Information Updated</h2>
+                    <p>Details for shipment #{shipment.ID} have been updated.</p>
+                    <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px;'>
                         <p><strong>Description:</strong> {shipment.Description}</p>
                         <p><strong>Status:</strong> {shipment.Status}</p>
                         <p><strong>Destination:</strong> {shipment.Destination}</p>
