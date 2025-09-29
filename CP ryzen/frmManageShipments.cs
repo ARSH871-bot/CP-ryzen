@@ -46,8 +46,7 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error setting up form: {ex.Message}", "Setup Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ErrorHandler.HandleException(ex, "Setup Form", true);
             }
         }
 
@@ -94,8 +93,7 @@ namespace ShippingManagementSystem
             {
                 if (dgvShipments == null)
                 {
-                    MessageBox.Show("Data grid is not initialized. Please check the form designer.", "Control Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ErrorHandler.ShowWarning("Data grid is not initialized. Please check the form designer.", "Control Error");
                     return;
                 }
 
@@ -112,8 +110,7 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading shipments: {ex.Message}", "Loading Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Load Shipments", true);
             }
         }
 
@@ -165,7 +162,6 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                // Don't show error for grid configuration - it's not critical
                 System.Diagnostics.Debug.WriteLine($"Grid configuration error: {ex.Message}");
             }
         }
@@ -182,12 +178,11 @@ namespace ShippingManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error filtering shipments: {ex.Message}", "Filter Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Filter Shipments", true);
             }
         }
 
-        private void btnAddShipment_Click(object sender, EventArgs e)
+        private async void btnAddShipment_Click(object sender, EventArgs e)
         {
             try
             {
@@ -208,16 +203,23 @@ namespace ShippingManagementSystem
                 shipments.Add(newShipment);
                 LoadShipmentsToGrid();
 
+                // Send email notification asynchronously
+                _ = EmailManager.SendShipmentCreatedEmail("admin@ryzenshipment.com", newShipment);
+
                 // Select the newly added shipment
                 SelectShipmentInGrid(newShipment.ID);
 
-                MessageBox.Show("Shipment added successfully! Select it and click 'Edit' to modify details.",
-                    "Shipment Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ErrorHandler.ShowInfo(
+                    "Shipment added successfully!\n\n" +
+                    "- Select it and click 'Edit' to modify details\n" +
+                    "- An email notification has been sent",
+                    "Shipment Added");
+
+                ErrorHandler.LogInfo($"New shipment created: ID {newShipment.ID}", "frmManageShipments");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error adding shipment: {ex.Message}", "Add Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Add Shipment", true);
             }
         }
 
@@ -274,50 +276,47 @@ namespace ShippingManagementSystem
                     }
                     else
                     {
-                        MessageBox.Show("Edit panel is not available. Please check the form designer.", "Edit Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        ErrorHandler.ShowWarning("Edit panel is not available. Please check the form designer.", "Edit Error");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Please select a shipment to edit.", "Edit Shipment",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ErrorHandler.ShowWarning("Please select a shipment to edit.", "Edit Shipment");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error opening edit panel: {ex.Message}", "Edit Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Edit Shipment", true);
             }
         }
 
-        private void btnSaveEdit_Click(object sender, EventArgs e)
+        private async void btnSaveEdit_Click(object sender, EventArgs e)
         {
             try
             {
                 if (selectedShipment != null)
                 {
+                    // Store old status for comparison
+                    string oldStatus = selectedShipment.Status;
+
                     // Validate input with null checks
                     if (txtEditDescription == null || string.IsNullOrWhiteSpace(txtEditDescription.Text))
                     {
-                        MessageBox.Show("Description cannot be empty.", "Validation Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        ErrorHandler.ShowWarning("Description cannot be empty.", "Validation Error");
                         txtEditDescription?.Focus();
                         return;
                     }
 
                     if (txtEditDestination == null || string.IsNullOrWhiteSpace(txtEditDestination.Text))
                     {
-                        MessageBox.Show("Destination cannot be empty.", "Validation Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        ErrorHandler.ShowWarning("Destination cannot be empty.", "Validation Error");
                         txtEditDestination?.Focus();
                         return;
                     }
 
                     if (cmbEditStatus?.SelectedItem == null)
                     {
-                        MessageBox.Show("Please select a status.", "Validation Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        ErrorHandler.ShowWarning("Please select a status.", "Validation Error");
                         cmbEditStatus?.Focus();
                         return;
                     }
@@ -325,8 +324,7 @@ namespace ShippingManagementSystem
                     if (dtpEditEstimatedArrival != null && dtpEditDateShipped != null &&
                         dtpEditEstimatedArrival.Value < dtpEditDateShipped.Value)
                     {
-                        MessageBox.Show("Estimated arrival date cannot be before the shipped date.",
-                            "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        ErrorHandler.ShowWarning("Estimated arrival date cannot be before the shipped date.", "Validation Error");
                         dtpEditEstimatedArrival.Focus();
                         return;
                     }
@@ -342,14 +340,19 @@ namespace ShippingManagementSystem
                     if (pnlEditShipment != null)
                         pnlEditShipment.Visible = false;
 
-                    MessageBox.Show("Shipment updated successfully!", "Edit Shipment",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Send email notification if status changed
+                    if (oldStatus != selectedShipment.Status)
+                    {
+                        _ = EmailManager.SendShipmentCreatedEmail("admin@ryzenshipment.com", selectedShipment);
+                    }
+
+                    ErrorHandler.ShowInfo("Shipment updated successfully!", "Edit Shipment");
+                    ErrorHandler.LogInfo($"Shipment updated: ID {selectedShipment.ID}, Status: {oldStatus} -> {selectedShipment.Status}", "frmManageShipments");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving shipment: {ex.Message}", "Save Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Save Shipment", true);
             }
         }
 
@@ -368,28 +371,29 @@ namespace ShippingManagementSystem
                 {
                     var shipment = (Shipment)dgvShipments.CurrentRow.DataBoundItem;
 
-                    var result = MessageBox.Show(
-                        $"Are you sure you want to delete this shipment?\n\nID: {shipment.ID}\nDescription: {shipment.Description}\nDestination: {shipment.Destination}",
-                        "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    var result = ErrorHandler.ShowConfirmation(
+                        $"Are you sure you want to delete this shipment?\n\n" +
+                        $"ID: {shipment.ID}\n" +
+                        $"Description: {shipment.Description}\n" +
+                        $"Destination: {shipment.Destination}",
+                        "Confirm Delete");
 
                     if (result == DialogResult.Yes)
                     {
                         shipments.Remove(shipment);
                         LoadShipmentsToGrid();
-                        MessageBox.Show("Shipment deleted successfully!", "Delete Shipment",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        ErrorHandler.ShowInfo("Shipment deleted successfully!", "Delete Shipment");
+                        ErrorHandler.LogInfo($"Shipment deleted: ID {shipment.ID}", "frmManageShipments");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Please select a shipment to delete.", "Delete Shipment",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ErrorHandler.ShowWarning("Please select a shipment to delete.", "Delete Shipment");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error deleting shipment: {ex.Message}", "Delete Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Delete Shipment", true);
             }
         }
 
@@ -410,18 +414,16 @@ namespace ShippingManagementSystem
                                    $"Estimated Arrival: {shipment.EstimatedArrival:MM/dd/yyyy}\n" +
                                    $"Assigned Role: {shipment.Role}";
 
-                    MessageBox.Show(details, "Shipment Details", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ErrorHandler.ShowInfo(details, "Shipment Details");
                 }
                 else
                 {
-                    MessageBox.Show("Please select a shipment to view details.", "View Details",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ErrorHandler.ShowWarning("Please select a shipment to view details.", "View Details");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error viewing shipment details: {ex.Message}", "View Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "View Details", true);
             }
         }
 
@@ -433,11 +435,11 @@ namespace ShippingManagementSystem
                 SetupForm();
                 // Refresh the display
                 LoadShipmentsToGrid();
+                ErrorHandler.LogInfo("Manage Shipments form loaded", "frmManageShipments");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error initializing shipments form: {ex.Message}", "Initialization Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorHandler.HandleException(ex, "Initialize Shipments Form", true);
             }
         }
 
@@ -460,6 +462,11 @@ namespace ShippingManagementSystem
 
             return shipments.GroupBy(s => s.Status)
                            .ToDictionary(g => g.Key, g => g.Count());
+        }
+
+        private void lblManageShipments_Click(object sender, EventArgs e)
+        {
+            // Reserved for future functionality
         }
     }
 
