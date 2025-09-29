@@ -90,5 +90,25 @@ namespace ShippingManagementSystem
         private void frmRegister_Load(object sender, EventArgs e)
         {
         }
+
+        private void txtUsername_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add real-time username validation here
+        }
+
+        private void txtPassword_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add password strength indicator here
+        }
+
+        private void txtEmail_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add email format validation here
+        }
+
+        private void txtConfirmPassword_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add password match indicator here
+        }
     }
 }

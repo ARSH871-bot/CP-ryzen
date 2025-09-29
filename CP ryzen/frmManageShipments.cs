@@ -183,7 +183,7 @@ namespace ShippingManagementSystem
             }
         }
 
-        private async void btnAddShipment_Click(object sender, EventArgs e)
+        private void btnAddShipment_Click(object sender, EventArgs e)
         {
             try
             {
@@ -204,7 +204,7 @@ namespace ShippingManagementSystem
                 LoadShipmentsToGrid();
                 SelectShipmentInGrid(newShipment.ID);
 
-                // Send email notification
+                // Send email notification (fire and forget)
                 _ = EmailManager.SendShipmentCreatedEmail("admin@ryzenshipment.com", newShipment);
 
                 ErrorHandler.ShowInfo(
@@ -286,7 +286,7 @@ namespace ShippingManagementSystem
             }
         }
 
-        private async void btnSaveEdit_Click(object sender, EventArgs e)
+        private void btnSaveEdit_Click(object sender, EventArgs e)
         {
             try
             {
@@ -333,7 +333,7 @@ namespace ShippingManagementSystem
                     if (pnlEditShipment != null)
                         pnlEditShipment.Visible = false;
 
-                    // Send email notification if status changed
+                    // Send email notification if status changed (fire and forget)
                     if (oldStatus != selectedShipment.Status)
                     {
                         _ = EmailManager.SendShipmentStatusUpdateEmail("admin@ryzenshipment.com", selectedShipment);
@@ -432,6 +432,11 @@ namespace ShippingManagementSystem
             {
                 ErrorHandler.HandleException(ex, "Initialize Shipments Form", true);
             }
+        }
+
+        private void frmManageShipments_Load_1(object sender, EventArgs e)
+        {
+            // Duplicate event handler - can be removed if not needed
         }
 
         public void RefreshData()

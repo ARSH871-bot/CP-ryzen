@@ -55,228 +55,191 @@
             this.lblLogin = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.SuspendLayout();
-
             // 
             // pictureBoxLogo
             // 
-            this.pictureBoxLogo.Location = new System.Drawing.Point(200, 20);
+            this.pictureBoxLogo.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxLogo.Name = "pictureBoxLogo";
-            this.pictureBoxLogo.Size = new System.Drawing.Size(100, 80);
-            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLogo.Size = new System.Drawing.Size(100, 50);
             this.pictureBoxLogo.TabIndex = 0;
             this.pictureBoxLogo.TabStop = false;
-            this.pictureBoxLogo.BackColor = System.Drawing.Color.LightGray;
             this.pictureBoxLogo.Click += new System.EventHandler(this.pictureBoxLogo_Click);
-
             // 
             // labelTitle
             // 
             this.labelTitle.Font = new System.Drawing.Font("Arial", 16F, System.Drawing.FontStyle.Bold);
             this.labelTitle.ForeColor = System.Drawing.Color.Navy;
-            this.labelTitle.Location = new System.Drawing.Point(50, 110);
+            this.labelTitle.Location = new System.Drawing.Point(85, 130);
             this.labelTitle.Name = "labelTitle";
-            this.labelTitle.Size = new System.Drawing.Size(400, 30);
+            this.labelTitle.Size = new System.Drawing.Size(360, 30);
             this.labelTitle.TabIndex = 1;
-            this.labelTitle.Text = "Register - Ryzen Shipping";
+            this.labelTitle.Text = "Register - Ryzen Shipping Management";
             this.labelTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
             // 
             // labelUsername
             // 
             this.labelUsername.Font = new System.Drawing.Font("Arial", 10F);
-            this.labelUsername.Location = new System.Drawing.Point(50, 160);
+            this.labelUsername.Location = new System.Drawing.Point(50, 180);
             this.labelUsername.Name = "labelUsername";
             this.labelUsername.Size = new System.Drawing.Size(100, 23);
             this.labelUsername.TabIndex = 2;
             this.labelUsername.Text = "Username";
-
             // 
             // txtUsername
             // 
-            this.txtUsername.Font = new System.Drawing.Font("Arial", 10F);
-            this.txtUsername.Location = new System.Drawing.Point(50, 185);
+            this.txtUsername.Location = new System.Drawing.Point(50, 205);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(400, 23);
+            this.txtUsername.Size = new System.Drawing.Size(400, 22);
             this.txtUsername.TabIndex = 3;
             this.txtUsername.TextChanged += new System.EventHandler(this.txtUsername_TextChanged);
-
             // 
             // labelPassword
             // 
             this.labelPassword.Font = new System.Drawing.Font("Arial", 10F);
-            this.labelPassword.Location = new System.Drawing.Point(50, 220);
+            this.labelPassword.Location = new System.Drawing.Point(50, 250);
             this.labelPassword.Name = "labelPassword";
             this.labelPassword.Size = new System.Drawing.Size(100, 23);
             this.labelPassword.TabIndex = 4;
             this.labelPassword.Text = "Password";
-
             // 
             // txtPassword
             // 
-            this.txtPassword.Font = new System.Drawing.Font("Arial", 10F);
-            this.txtPassword.Location = new System.Drawing.Point(50, 245);
+            this.txtPassword.Location = new System.Drawing.Point(50, 275);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(400, 23);
+            this.txtPassword.Size = new System.Drawing.Size(400, 22);
             this.txtPassword.TabIndex = 5;
             this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
-
             // 
             // labelConfirmPassword
             // 
             this.labelConfirmPassword.Font = new System.Drawing.Font("Arial", 10F);
-            this.labelConfirmPassword.Location = new System.Drawing.Point(50, 280);
+            this.labelConfirmPassword.Location = new System.Drawing.Point(50, 320);
             this.labelConfirmPassword.Name = "labelConfirmPassword";
-            this.labelConfirmPassword.Size = new System.Drawing.Size(120, 23);
+            this.labelConfirmPassword.Size = new System.Drawing.Size(100, 23);
             this.labelConfirmPassword.TabIndex = 6;
-            this.labelConfirmPassword.Text = "Confirm";
-
+            this.labelConfirmPassword.Text = "Confirm Password";
             // 
             // txtConfirmPassword
             // 
-            this.txtConfirmPassword.Font = new System.Drawing.Font("Arial", 10F);
-            this.txtConfirmPassword.Location = new System.Drawing.Point(50, 305);
+            this.txtConfirmPassword.Location = new System.Drawing.Point(50, 345);
             this.txtConfirmPassword.Name = "txtConfirmPassword";
             this.txtConfirmPassword.PasswordChar = '*';
-            this.txtConfirmPassword.Size = new System.Drawing.Size(400, 23);
+            this.txtConfirmPassword.Size = new System.Drawing.Size(400, 22);
             this.txtConfirmPassword.TabIndex = 7;
             this.txtConfirmPassword.TextChanged += new System.EventHandler(this.txtConfirmPassword_TextChanged);
-
             // 
             // labelCompanyName
             // 
             this.labelCompanyName.Font = new System.Drawing.Font("Arial", 10F);
-            this.labelCompanyName.Location = new System.Drawing.Point(50, 340);
+            this.labelCompanyName.Location = new System.Drawing.Point(50, 390);
             this.labelCompanyName.Name = "labelCompanyName";
             this.labelCompanyName.Size = new System.Drawing.Size(100, 23);
             this.labelCompanyName.TabIndex = 8;
-            this.labelCompanyName.Text = "Company";
-
+            this.labelCompanyName.Text = "Company Name";
             // 
             // txtCompanyName
             // 
-            this.txtCompanyName.Font = new System.Drawing.Font("Arial", 10F);
-            this.txtCompanyName.Location = new System.Drawing.Point(50, 365);
+            this.txtCompanyName.Location = new System.Drawing.Point(50, 415);
             this.txtCompanyName.Name = "txtCompanyName";
-            this.txtCompanyName.Size = new System.Drawing.Size(400, 23);
+            this.txtCompanyName.Size = new System.Drawing.Size(400, 22);
             this.txtCompanyName.TabIndex = 9;
-
             // 
             // labelEmail
             // 
             this.labelEmail.Font = new System.Drawing.Font("Arial", 10F);
-            this.labelEmail.Location = new System.Drawing.Point(50, 400);
+            this.labelEmail.Location = new System.Drawing.Point(50, 460);
             this.labelEmail.Name = "labelEmail";
             this.labelEmail.Size = new System.Drawing.Size(100, 23);
             this.labelEmail.TabIndex = 10;
             this.labelEmail.Text = "Email";
-
             // 
             // txtEmail
             // 
-            this.txtEmail.Font = new System.Drawing.Font("Arial", 10F);
-            this.txtEmail.Location = new System.Drawing.Point(50, 425);
+            this.txtEmail.Location = new System.Drawing.Point(50, 485);
             this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(400, 23);
+            this.txtEmail.Size = new System.Drawing.Size(400, 22);
             this.txtEmail.TabIndex = 11;
             this.txtEmail.TextChanged += new System.EventHandler(this.txtEmail_TextChanged);
-
             // 
             // labelPhone
             // 
             this.labelPhone.Font = new System.Drawing.Font("Arial", 10F);
-            this.labelPhone.Location = new System.Drawing.Point(50, 460);
+            this.labelPhone.Location = new System.Drawing.Point(50, 530);
             this.labelPhone.Name = "labelPhone";
             this.labelPhone.Size = new System.Drawing.Size(100, 23);
             this.labelPhone.TabIndex = 12;
             this.labelPhone.Text = "Phone";
-
             // 
             // txtPhone
             // 
-            this.txtPhone.Font = new System.Drawing.Font("Arial", 10F);
-            this.txtPhone.Location = new System.Drawing.Point(50, 485);
+            this.txtPhone.Location = new System.Drawing.Point(50, 555);
             this.txtPhone.Name = "txtPhone";
-            this.txtPhone.Size = new System.Drawing.Size(400, 23);
+            this.txtPhone.Size = new System.Drawing.Size(400, 22);
             this.txtPhone.TabIndex = 13;
-
             // 
             // labelRole
             // 
             this.labelRole.Font = new System.Drawing.Font("Arial", 10F);
-            this.labelRole.Location = new System.Drawing.Point(50, 520);
+            this.labelRole.Location = new System.Drawing.Point(50, 600);
             this.labelRole.Name = "labelRole";
             this.labelRole.Size = new System.Drawing.Size(100, 23);
             this.labelRole.TabIndex = 14;
             this.labelRole.Text = "Role";
-
             // 
             // cmbRole
             // 
-            this.cmbRole.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbRole.Font = new System.Drawing.Font("Arial", 10F);
-            this.cmbRole.FormattingEnabled = true;
             this.cmbRole.Items.AddRange(new object[] {
             "Admin",
             "Manager",
             "Dispatcher",
             "Employee"});
-            this.cmbRole.Location = new System.Drawing.Point(50, 545);
+            this.cmbRole.Location = new System.Drawing.Point(50, 625);
             this.cmbRole.Name = "cmbRole";
             this.cmbRole.Size = new System.Drawing.Size(400, 24);
             this.cmbRole.TabIndex = 15;
-
             // 
             // btnRegister
             // 
             this.btnRegister.BackColor = System.Drawing.Color.Navy;
-            this.btnRegister.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRegister.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold);
             this.btnRegister.ForeColor = System.Drawing.Color.White;
-            this.btnRegister.Location = new System.Drawing.Point(50, 590);
+            this.btnRegister.Location = new System.Drawing.Point(50, 670);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(190, 40);
             this.btnRegister.TabIndex = 16;
             this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = false;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
-
             // 
             // btnClear
             // 
             this.btnClear.BackColor = System.Drawing.Color.DarkSlateGray;
-            this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClear.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold);
             this.btnClear.ForeColor = System.Drawing.Color.White;
-            this.btnClear.Location = new System.Drawing.Point(260, 590);
+            this.btnClear.Location = new System.Drawing.Point(260, 670);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(190, 40);
             this.btnClear.TabIndex = 17;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-
             // 
             // lblLogin
             // 
-            this.lblLogin.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lblLogin.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Underline);
             this.lblLogin.ForeColor = System.Drawing.Color.Blue;
-            this.lblLogin.Location = new System.Drawing.Point(125, 650);
+            this.lblLogin.Location = new System.Drawing.Point(135, 730);
             this.lblLogin.Name = "lblLogin";
             this.lblLogin.Size = new System.Drawing.Size(250, 20);
             this.lblLogin.TabIndex = 18;
             this.lblLogin.Text = "Already have an account? Login";
             this.lblLogin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblLogin.Click += new System.EventHandler(this.lblLogin_Click);
-
             // 
             // frmRegister
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(500, 700);
+            this.ClientSize = new System.Drawing.Size(500, 800);
             this.Controls.Add(this.pictureBoxLogo);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.labelUsername);
@@ -297,12 +260,10 @@
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.lblLogin);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
             this.Name = "frmRegister";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Registration - Enhanced Security";
+            this.Text = "Register - Ryzen Shipping Management";
             this.Load += new System.EventHandler(this.frmRegister_Load);
-
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
