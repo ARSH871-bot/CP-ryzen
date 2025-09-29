@@ -14,7 +14,7 @@ namespace ShippingManagementSystem
         private Button btnViewDetails;
         private ComboBox cmbFilterByRole;
         private Label lblFilter;
-        private Panel pnlEditShipment; // Panel for inline editing
+        private Panel pnlEditShipment;
         private TextBox txtEditDescription;
         private ComboBox cmbEditStatus;
         private TextBox txtEditDestination;
@@ -22,6 +22,11 @@ namespace ShippingManagementSystem
         private DateTimePicker dtpEditEstimatedArrival;
         private Button btnSaveEdit;
         private Button btnCancelEdit;
+        private Label lblEditDescription;
+        private Label lblEditStatus;
+        private Label lblEditDestination;
+        private Label lblEditDateShipped;
+        private Label lblEditEstArrival;
 
         protected override void Dispose(bool disposing)
         {
@@ -50,6 +55,11 @@ namespace ShippingManagementSystem
             this.dtpEditEstimatedArrival = new DateTimePicker();
             this.btnSaveEdit = new Button();
             this.btnCancelEdit = new Button();
+            this.lblEditDescription = new Label();
+            this.lblEditStatus = new Label();
+            this.lblEditDestination = new Label();
+            this.lblEditDateShipped = new Label();
+            this.lblEditEstArrival = new Label();
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvShipments)).BeginInit();
             this.pnlEditShipment.SuspendLayout();
@@ -151,53 +161,77 @@ namespace ShippingManagementSystem
             this.pnlEditShipment.Visible = false;
             this.pnlEditShipment.BackColor = Color.LightGray;
 
-            // Add controls to edit panel
-            Label lblEditDescription = new Label();
-            lblEditDescription.Text = "Description:";
-            lblEditDescription.Location = new Point(10, 20);
-            lblEditDescription.Size = new Size(80, 20);
-            this.pnlEditShipment.Controls.Add(lblEditDescription);
+            // 
+            // lblEditDescription
+            // 
+            this.lblEditDescription.Text = "Description:";
+            this.lblEditDescription.Location = new Point(10, 20);
+            this.lblEditDescription.Size = new Size(80, 20);
+            this.pnlEditShipment.Controls.Add(this.lblEditDescription);
 
+            // 
+            // txtEditDescription
+            // 
             this.txtEditDescription.Location = new Point(100, 20);
             this.txtEditDescription.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.txtEditDescription);
 
-            Label lblEditStatus = new Label();
-            lblEditStatus.Text = "Status:";
-            lblEditStatus.Location = new Point(10, 60);
-            lblEditStatus.Size = new Size(80, 20);
-            this.pnlEditShipment.Controls.Add(lblEditStatus);
+            // 
+            // lblEditStatus
+            // 
+            this.lblEditStatus.Text = "Status:";
+            this.lblEditStatus.Location = new Point(10, 60);
+            this.lblEditStatus.Size = new Size(80, 20);
+            this.pnlEditShipment.Controls.Add(this.lblEditStatus);
 
+            // 
+            // cmbEditStatus
+            // 
             this.cmbEditStatus.Location = new Point(100, 60);
             this.cmbEditStatus.Size = new Size(200, 24);
             this.pnlEditShipment.Controls.Add(this.cmbEditStatus);
 
-            Label lblEditDestination = new Label();
-            lblEditDestination.Text = "Destination:";
-            lblEditDestination.Location = new Point(10, 100);
-            lblEditDestination.Size = new Size(80, 20);
-            this.pnlEditShipment.Controls.Add(lblEditDestination);
+            // 
+            // lblEditDestination
+            // 
+            this.lblEditDestination.Text = "Destination:";
+            this.lblEditDestination.Location = new Point(10, 100);
+            this.lblEditDestination.Size = new Size(80, 20);
+            this.pnlEditShipment.Controls.Add(this.lblEditDestination);
 
+            // 
+            // txtEditDestination
+            // 
             this.txtEditDestination.Location = new Point(100, 100);
             this.txtEditDestination.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.txtEditDestination);
 
-            Label lblEditDateShipped = new Label();
-            lblEditDateShipped.Text = "Date Shipped:";
-            lblEditDateShipped.Location = new Point(350, 20);
-            lblEditDateShipped.Size = new Size(100, 20);
-            this.pnlEditShipment.Controls.Add(lblEditDateShipped);
+            // 
+            // lblEditDateShipped
+            // 
+            this.lblEditDateShipped.Text = "Date Shipped:";
+            this.lblEditDateShipped.Location = new Point(350, 20);
+            this.lblEditDateShipped.Size = new Size(100, 20);
+            this.pnlEditShipment.Controls.Add(this.lblEditDateShipped);
 
+            // 
+            // dtpEditDateShipped
+            // 
             this.dtpEditDateShipped.Location = new Point(460, 20);
             this.dtpEditDateShipped.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.dtpEditDateShipped);
 
-            Label lblEditEstArrival = new Label();
-            lblEditEstArrival.Text = "Est. Arrival:";
-            lblEditEstArrival.Location = new Point(350, 60);
-            lblEditEstArrival.Size = new Size(100, 20);
-            this.pnlEditShipment.Controls.Add(lblEditEstArrival);
+            // 
+            // lblEditEstArrival
+            // 
+            this.lblEditEstArrival.Text = "Est. Arrival:";
+            this.lblEditEstArrival.Location = new Point(350, 60);
+            this.lblEditEstArrival.Size = new Size(100, 20);
+            this.pnlEditShipment.Controls.Add(this.lblEditEstArrival);
 
+            // 
+            // dtpEditEstimatedArrival
+            // 
             this.dtpEditEstimatedArrival.Location = new Point(460, 60);
             this.dtpEditEstimatedArrival.Size = new Size(200, 22);
             this.pnlEditShipment.Controls.Add(this.dtpEditEstimatedArrival);
@@ -241,8 +275,6 @@ namespace ShippingManagementSystem
             this.FormBorderStyle = FormBorderStyle.None;
             this.Name = "frmManageShipments";
             this.Text = "Manage Shipments";
-
-            // FIXED: Changed from frmManageShipments_Load_1 to frmManageShipments_Load
             this.Load += new System.EventHandler(this.frmManageShipments_Load);
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvShipments)).EndInit();

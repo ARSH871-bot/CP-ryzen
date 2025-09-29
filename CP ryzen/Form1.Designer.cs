@@ -4,7 +4,6 @@ using System.Windows.Forms; // Required for creating Windows Form
 
 //This is the Login Form 
 // Namespace for the Shipping Management System
-
 namespace ShippingManagementSystem
 {
     // Partial class for the login form
@@ -13,7 +12,6 @@ namespace ShippingManagementSystem
         //  Declaring UI components used in the Form
         // Components for the form
         private System.ComponentModel.IContainer components = null;
-
         private System.Windows.Forms.PictureBox pictureBoxLogo;// Logo image
         private System.Windows.Forms.Label lblTitle; // Form title
         private System.Windows.Forms.Label lblUsername;// Username label
@@ -36,7 +34,6 @@ namespace ShippingManagementSystem
         // Method to initialize the components of the form
         private void InitializeComponent()
         {
-            // Initialize all components
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();
@@ -45,126 +42,127 @@ namespace ShippingManagementSystem
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.btnLogin = new System.Windows.Forms.Button();
             this.lblRegister = new System.Windows.Forms.Label();
-
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.SuspendLayout();
-
-            // Set form size to 50% of screen dimensions
-            int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-            this.ClientSize = new System.Drawing.Size(screenWidth / 2, screenHeight / 2);
 
             // 
             // pictureBoxLogo - displays the company logo
             // 
-            // Temporarily disabled logo - will be a gray placeholder
-            this.pictureBoxLogo.BackColor = System.Drawing.Color.LightGray;
-            this.pictureBoxLogo.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 40); // Center the logo
-            this.pictureBoxLogo.Size = new System.Drawing.Size(120, 60);
-            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxLogo.Location = new System.Drawing.Point(150, 20);
+            this.pictureBoxLogo.Name = "pictureBoxLogo";
+            this.pictureBoxLogo.Size = new System.Drawing.Size(100, 80);
+            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxLogo.TabIndex = 0;
             this.pictureBoxLogo.TabStop = false;
+            this.pictureBoxLogo.BackColor = System.Drawing.Color.LightGray;
 
             // 
-            // lblTitle - displays the title of the login page
+            // lblTitle - main form title
             // 
-            this.lblTitle.Text = "Login to Ryzen Shipping Management";
-            this.lblTitle.Font = new System.Drawing.Font("Arial", 14F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.lblTitle.Location = new System.Drawing.Point((this.ClientSize.Width - 280) / 2, 120);
-            this.lblTitle.Size = new System.Drawing.Size(280, 30);
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Arial", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.Color.DarkBlue;
+            this.lblTitle.Location = new System.Drawing.Point(80, 110);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(240, 26);
             this.lblTitle.TabIndex = 1;
+            this.lblTitle.Text = "Ryzen Shipping Login";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // 
-            // lblUsername - label for the UsernameField
+            // lblUsername - username field label
             // 
-            this.lblUsername.Text = "Username";
-            this.lblUsername.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 160);
-            this.lblUsername.Size = new System.Drawing.Size(240, 20);
+            this.lblUsername.AutoSize = true;
             this.lblUsername.Font = new System.Drawing.Font("Arial", 10F);
-            this.lblUsername.ForeColor = Color.Gray;
+            this.lblUsername.Location = new System.Drawing.Point(50, 160);
+            this.lblUsername.Name = "lblUsername";
+            this.lblUsername.Size = new System.Drawing.Size(73, 16);
             this.lblUsername.TabIndex = 2;
+            this.lblUsername.Text = "Username:";
 
             // 
-            // txtUsername - text box to enter Username
+            // txtUsername - username input field
             // 
-            this.txtUsername.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 185);
-            this.txtUsername.Size = new System.Drawing.Size(240, 22);
             this.txtUsername.Font = new System.Drawing.Font("Arial", 10F);
+            this.txtUsername.Location = new System.Drawing.Point(130, 157);
+            this.txtUsername.Name = "txtUsername";
+            this.txtUsername.Size = new System.Drawing.Size(200, 23);
             this.txtUsername.TabIndex = 3;
+            this.txtUsername.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtUsername_KeyPress);
 
             // 
-            // lblPassword - label for the Password field
+            // lblPassword - password field label
             // 
-            this.lblPassword.Text = "Password";
-            this.lblPassword.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 220);
-            this.lblPassword.Size = new System.Drawing.Size(240, 20);
+            this.lblPassword.AutoSize = true;
             this.lblPassword.Font = new System.Drawing.Font("Arial", 10F);
-            this.lblPassword.ForeColor = Color.Gray;
+            this.lblPassword.Location = new System.Drawing.Point(50, 200);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(72, 16);
             this.lblPassword.TabIndex = 4;
+            this.lblPassword.Text = "Password:";
 
             // 
-            // txtPassword - text box to enter Password
+            // txtPassword - password input field
             // 
-            this.txtPassword.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 245);
-            this.txtPassword.Size = new System.Drawing.Size(240, 22);
-            this.txtPassword.PasswordChar = '*'; // Masking character to hide the password
             this.txtPassword.Font = new System.Drawing.Font("Arial", 10F);
+            this.txtPassword.Location = new System.Drawing.Point(130, 197);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.PasswordChar = '*';
+            this.txtPassword.Size = new System.Drawing.Size(200, 23);
             this.txtPassword.TabIndex = 5;
+            this.txtPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPassword_KeyPress);
 
             // 
-            // btnLogin - button to submit login credentials
+            // btnLogin - login button
             // 
-            this.btnLogin.Text = "Login";
-            this.btnLogin.Location = new System.Drawing.Point((this.ClientSize.Width - 240) / 2, 290);
-            this.btnLogin.Size = new System.Drawing.Size(240, 35);
-            this.btnLogin.BackColor = System.Drawing.Color.DarkOrange;
+            this.btnLogin.BackColor = System.Drawing.Color.DarkBlue;
+            this.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLogin.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold);
             this.btnLogin.ForeColor = System.Drawing.Color.White;
-            this.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat; // Flat style for a modern look
-            this.btnLogin.Font = new System.Drawing.Font("Arial", 10F, FontStyle.Bold);
+            this.btnLogin.Location = new System.Drawing.Point(130, 240);
+            this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Size = new System.Drawing.Size(90, 30);
             this.btnLogin.TabIndex = 6;
+            this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = false;
-            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click); // Event handler for login button click
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
 
             // 
-            // lblRegister - label to navigate to the registration form
+            // lblRegister - registration link
             // 
-            this.lblRegister.Text = "Create an Account";
+            this.lblRegister.AutoSize = true;
+            this.lblRegister.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblRegister.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Underline);
             this.lblRegister.ForeColor = System.Drawing.Color.Blue;
-            this.lblRegister.Font = new System.Drawing.Font("Arial", 9F, FontStyle.Underline);
-            this.lblRegister.Location = new System.Drawing.Point((this.ClientSize.Width - 120) / 2, 340);
-            this.lblRegister.Size = new System.Drawing.Size(120, 20);
-            this.lblRegister.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblRegister.Location = new System.Drawing.Point(230, 247);
+            this.lblRegister.Name = "lblRegister";
+            this.lblRegister.Size = new System.Drawing.Size(100, 15);
             this.lblRegister.TabIndex = 7;
-            this.lblRegister.Cursor = Cursors.Hand; // Changes cursor to hand to indicate it is clickable
-            this.lblRegister.Click += new System.EventHandler(this.lblRegister_Click); // Event handler for label click
+            this.lblRegister.Text = "Create an Account";
+            this.lblRegister.Click += new System.EventHandler(this.lblRegister_Click);
 
             // 
-            // frmLogin - defining the properties of the form
+            // frmLogin - main form configuration - FIXED EVENT HANDLER
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.pictureBoxLogo);
-            this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.lblUsername);
-            this.Controls.Add(this.txtUsername);
-            this.Controls.Add(this.lblPassword);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.btnLogin);
+            this.ClientSize = new System.Drawing.Size(400, 300);
             this.Controls.Add(this.lblRegister);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog; // Prevents resizing of the form
-            this.MaximizeBox = false; // Disable maximize button
-            this.MinimizeBox = true; // Keep minimize button
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen; // Centers the form on the screen
-            this.Text = "Login - Ryzen Shipping Management";
+            this.Controls.Add(this.btnLogin);
+            this.Controls.Add(this.txtPassword);
+            this.Controls.Add(this.lblPassword);
+            this.Controls.Add(this.txtUsername);
+            this.Controls.Add(this.lblUsername);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.pictureBoxLogo);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "frmLogin";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Ryzen Shipping Management - Login";
+            this.Load += new System.EventHandler(this.frmLogin_Load); // FIXED: Changed from frmLogin_Load_1 to frmLogin_Load
 
-            // FIXED: Use correct event handler name
-            this.Load += new System.EventHandler(this.frmLogin_Load);
-
-            // Complete the layout
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

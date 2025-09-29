@@ -6,12 +6,12 @@ namespace ShippingManagementSystem
 {
     public partial class frmRegister : Form
     {
-        private dbCustomer customerDb; // Instance of dbCustomer for database operations
+        private dbCustomer customerDb;
 
         public frmRegister()
         {
             InitializeComponent();
-            customerDb = new dbCustomer(); // Initialize dbCustomer
+            customerDb = new dbCustomer();
         }
 
         private void btnRegister_Click(object sender, EventArgs e)
@@ -37,26 +37,27 @@ namespace ShippingManagementSystem
                 return;
             }
 
-            // Check if the user already exists
             if (customerDb.Read(username))
             {
                 MessageBox.Show("A user with this username already exists.", "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // Set user data
             customerDb.data.USERNAME = username;
             customerDb.data.PASSWORD = password;
             customerDb.data.COMPANY = companyName;
             customerDb.data.EMAIL = email;
             customerDb.data.PHONE = phone;
 
-            // Save to database
             if (customerDb.Update(username))
             {
-                MessageBox.Show("Registration Successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                _ = EmailManager.SendWelcomeEmail(email, username, role, companyName);
+
+                MessageBox.Show("Registration Successful!\n\nA welcome email has been sent to your email address.",
+                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 this.Hide();
-                new frmLogin().Show(); // Redirect to Login form
+                new frmLogin().Show();
             }
             else
             {
@@ -67,7 +68,7 @@ namespace ShippingManagementSystem
         private void lblLogin_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new frmLogin().Show(); // Navigate back to Login form
+            new frmLogin().Show();
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -84,12 +85,30 @@ namespace ShippingManagementSystem
 
         private void pictureBoxLogo_Click(object sender, EventArgs e)
         {
-            // Optional: Handle logo click events if required
         }
 
         private void frmRegister_Load(object sender, EventArgs e)
         {
-            // Optional: Handle form load events if required
+        }
+
+        private void txtUsername_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add real-time username validation here
+        }
+
+        private void txtPassword_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add password strength indicator here
+        }
+
+        private void txtEmail_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add email format validation here
+        }
+
+        private void txtConfirmPassword_TextChanged(object sender, EventArgs e)
+        {
+            // Optional: Add password match indicator here
         }
     }
 }
