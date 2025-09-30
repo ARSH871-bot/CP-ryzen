@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
@@ -542,5 +543,10 @@ namespace ShippingManagementSystem
         }
 
         #endregion
+
+        private void btnTestDatabase_Click(object sender, EventArgs e)
+        {
+            new frmDatabaseTest().ShowDialog();
+        }
     }
 }

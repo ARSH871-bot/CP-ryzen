@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using ShippingManagementSystem.Models; // Added this line
 
 namespace ShippingManagementSystem
 {
@@ -204,7 +205,6 @@ namespace ShippingManagementSystem
                 LoadShipmentsToGrid();
                 SelectShipmentInGrid(newShipment.ID);
 
-                // Send email notification (fire and forget)
                 _ = EmailManager.SendShipmentCreatedEmail("admin@ryzenshipment.com", newShipment);
 
                 ErrorHandler.ShowInfo(
@@ -333,7 +333,6 @@ namespace ShippingManagementSystem
                     if (pnlEditShipment != null)
                         pnlEditShipment.Visible = false;
 
-                    // Send email notification if status changed (fire and forget)
                     if (oldStatus != selectedShipment.Status)
                     {
                         _ = EmailManager.SendShipmentStatusUpdateEmail("admin@ryzenshipment.com", selectedShipment);
@@ -434,11 +433,6 @@ namespace ShippingManagementSystem
             }
         }
 
-        private void frmManageShipments_Load_1(object sender, EventArgs e)
-        {
-            // Duplicate event handler - can be removed if not needed
-        }
-
         public void RefreshData()
         {
             LoadShipmentsToGrid();
@@ -455,22 +449,6 @@ namespace ShippingManagementSystem
 
             return shipments.GroupBy(s => s.Status)
                            .ToDictionary(g => g.Key, g => g.Count());
-        }
-    }
-
-    public class Shipment
-    {
-        public int ID { get; set; }
-        public string Description { get; set; }
-        public string Status { get; set; }
-        public string Destination { get; set; }
-        public DateTime DateShipped { get; set; }
-        public DateTime EstimatedArrival { get; set; }
-        public string Role { get; set; }
-
-        public override string ToString()
-        {
-            return $"ID {ID}: {Description} - {Status}";
         }
     }
 }

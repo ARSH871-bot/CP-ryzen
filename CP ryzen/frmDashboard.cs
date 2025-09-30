@@ -205,6 +205,13 @@ namespace ShippingManagementSystem
             // Could add gradients, logos, or other visual enhancements
         }
 
+        // In frmDashboard.cs or wherever your main menu is
+        private void btnDatabaseMigration_Click(object sender, EventArgs e)
+        {
+            new frmDatabaseTest().ShowDialog();
+        }
+
+
         // Utility method to refresh current content
         public void RefreshCurrentContent()
         {
