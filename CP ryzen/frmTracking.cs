@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 namespace ShippingManagementSystem
@@ -9,10 +8,12 @@ namespace ShippingManagementSystem
     {
         private Timer clockTimer;
         private bool isDarkMode = false;
+        private ShipmentManager shipmentManager;
 
         public frmTracking()
         {
             InitializeComponent();
+            shipmentManager = new ShipmentManager();
             InitializeClock();
         }
 
@@ -25,10 +26,7 @@ namespace ShippingManagementSystem
                                          "1. Enter a tracking number in the field above\n" +
                                          "2. Click 'Track' to retrieve shipment details\n" +
                                          "3. Use the search history dropdown to quickly access previous searches\n\n" +
-                                         "Sample tracking numbers to try:\n" +
-                                         "• 1234567890 (In Transit)\n" +
-                                         "• 0987654321 (Delivered)\n" +
-                                         "• TEST123456 (Processing)";
+                                         "Enter any tracking number from your shipments to track it.";
 
                 ErrorHandler.LogInfo("Tracking form loaded successfully", "frmTracking_Load");
             }, "Loading Tracking Form");
@@ -39,7 +37,7 @@ namespace ShippingManagementSystem
             ErrorHandler.SafeExecute(() =>
             {
                 clockTimer = new Timer();
-                clockTimer.Interval = 1000; // Update every second
+                clockTimer.Interval = 1000;
                 clockTimer.Tick += (s, e) =>
                 {
                     ErrorHandler.SafeExecute(() =>
@@ -51,7 +49,7 @@ namespace ShippingManagementSystem
                     }, "Clock Update");
                 };
                 clockTimer.Start();
-                ErrorHandler.LogInfo("Clock timer initialized and started", "InitializeClock");
+                ErrorHandler.LogInfo("Clock timer initialized", "InitializeClock");
             }, "Clock Initialization");
         }
 
@@ -85,7 +83,6 @@ namespace ShippingManagementSystem
             {
                 string trackingNumber = txtTrackingNumber.Text.Trim();
 
-                // Validate input
                 if (string.IsNullOrEmpty(trackingNumber) || trackingNumber == "Enter Tracking Number")
                 {
                     ErrorHandler.ShowWarning("Please enter a valid tracking number.", "Input Required");
@@ -93,7 +90,6 @@ namespace ShippingManagementSystem
                     return;
                 }
 
-                // Validate tracking number format
                 if (trackingNumber.Length < 5)
                 {
                     ErrorHandler.ShowWarning("Tracking number must be at least 5 characters long.", "Invalid Format");
@@ -101,28 +97,71 @@ namespace ShippingManagementSystem
                     return;
                 }
 
-                // Show loading state
                 ShowLoadingState(true);
 
                 try
                 {
-                    // Simulate API call delay
-                    Application.DoEvents();
-                    System.Threading.Thread.Sleep(500); // Simulate network delay
+                    System.Threading.Thread.Sleep(500);
 
-                    string trackingResult = RetrieveTrackingDetails(trackingNumber);
+                    // Get shipment from database
+                    Shipment shipment = shipmentManager.GetShipmentByTrackingNumber(trackingNumber);
+
+                    string trackingResult;
+                    if (shipment != null)
+                    {
+                        trackingResult = FormatShipmentDetails(shipment);
+                        pbShipmentProgress.Value = CalculateProgress(shipment.Status);
+                    }
+                    else
+                    {
+                        trackingResult = $"TRACKING NOT FOUND\n" +
+                                       $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                                       $"Tracking Number: {trackingNumber}\n" +
+                                       $"Status: NOT FOUND\n\n" +
+                                       $"This tracking number could not be found in our system.\n\n" +
+                                       $"Please verify the tracking number and try again.";
+                        pbShipmentProgress.Value = 0;
+                    }
+
                     rtbTrackingDetails.Text = trackingResult;
-
-                    // Add to history if not already present
                     AddToHistory(trackingNumber);
-
-                    ErrorHandler.LogInfo($"Successfully tracked package: {trackingNumber}", "btnTrack_Click");
+                    ErrorHandler.LogInfo($"Tracked package: {trackingNumber}", "btnTrack_Click");
                 }
                 finally
                 {
                     ShowLoadingState(false);
                 }
             }, "Package Tracking");
+        }
+
+        private string FormatShipmentDetails(Shipment shipment)
+        {
+            return $"📦 TRACKING DETAILS\n" +
+                   $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                   $"Tracking Number: {shipment.TrackingNumber}\n" +
+                   $"Status: {shipment.Status.ToUpper()}\n" +
+                   $"Description: {shipment.Description}\n" +
+                   $"Destination: {shipment.Destination}\n" +
+                   $"Date Shipped: {shipment.DateShipped:MMM dd, yyyy}\n" +
+                   $"Estimated Arrival: {shipment.EstimatedArrival:MMM dd, yyyy}\n" +
+                   (shipment.ActualArrival.HasValue ? $"Delivered: {shipment.ActualArrival:MMM dd, yyyy}\n" : "") +
+                   $"\n📍 SHIPMENT HISTORY:\n" +
+                   $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                   $"{shipment.DateShipped:MMM dd} - Package picked up\n" +
+                   $"{shipment.DateShipped.AddDays(1):MMM dd} - In transit\n" +
+                   (shipment.Status == "Delivered" ? $"{DateTime.Now:MMM dd} - Delivered\n" : $"{DateTime.Now:MMM dd} - {shipment.Status}\n");
+        }
+
+        private int CalculateProgress(string status)
+        {
+            switch (status?.ToLower())
+            {
+                case "pending": return 25;
+                case "processing": return 25;
+                case "in transit": return 75;
+                case "delivered": return 100;
+                default: return 50;
+            }
         }
 
         private void ShowLoadingState(bool isLoading)
@@ -142,79 +181,13 @@ namespace ShippingManagementSystem
             }, "Loading State Update");
         }
 
-        private string RetrieveTrackingDetails(string trackingNumber)
-        {
-            return ErrorHandler.SafeExecute(() =>
-            {
-                // Enhanced tracking simulation with multiple scenarios
-                switch (trackingNumber.ToUpper())
-                {
-                    case "1234567890":
-                        pbShipmentProgress.Value = 75;
-                        return $"📦 TRACKING DETAILS\n" +
-                               $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                               $"Tracking Number: {trackingNumber}\n" +
-                               $"Status: IN TRANSIT\n" +
-                               $"Current Location: Auckland Distribution Center, NZ\n" +
-                               $"Estimated Delivery: {DateTime.Now.AddDays(2):MMM dd, yyyy}\n" +
-                               $"Service Type: Express Shipping\n\n" +
-                               $"📍 TRACKING HISTORY:\n" +
-                               $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                               $"{DateTime.Now.AddDays(-3):MMM dd} - Package picked up from sender\n" +
-                               $"{DateTime.Now.AddDays(-2):MMM dd} - Arrived at sorting facility\n" +
-                               $"{DateTime.Now.AddDays(-1):MMM dd} - In transit to destination\n" +
-                               $"{DateTime.Now:MMM dd} - Out for delivery\n\n" +
-                               $"📞 For questions, call: 0800-SHIPPING";
-
-                    case "0987654321":
-                        pbShipmentProgress.Value = 100;
-                        return $"✅ DELIVERY CONFIRMED\n" +
-                               $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                               $"Tracking Number: {trackingNumber}\n" +
-                               $"Status: DELIVERED\n" +
-                               $"Delivered To: Front door\n" +
-                               $"Delivery Date: {DateTime.Now.AddDays(-1):MMM dd, yyyy} at 2:30 PM\n" +
-                               $"Signed By: Recipient\n" +
-                               $"Service Type: Standard Shipping\n\n" +
-                               $"Thank you for choosing our shipping service!";
-
-                    case "TEST123456":
-                        pbShipmentProgress.Value = 25;
-                        return $"🔄 PROCESSING\n" +
-                               $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                               $"Tracking Number: {trackingNumber}\n" +
-                               $"Status: PROCESSING\n" +
-                               $"Location: Origin Facility\n" +
-                               $"Estimated Ship Date: {DateTime.Now.AddDays(1):MMM dd, yyyy}\n" +
-                               $"Estimated Delivery: {DateTime.Now.AddDays(5):MMM dd, yyyy}\n" +
-                               $"Service Type: Standard Ground\n\n" +
-                               $"Your package is being prepared for shipment.";
-
-                    default:
-                        pbShipmentProgress.Value = 0;
-                        ErrorHandler.LogWarning($"Tracking number not found: {trackingNumber}", "RetrieveTrackingDetails");
-                        return $"❌ TRACKING NOT FOUND\n" +
-                               $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                               $"Tracking Number: {trackingNumber}\n" +
-                               $"Status: NOT FOUND\n\n" +
-                               $"This tracking number could not be found in our system.\n\n" +
-                               $"Please verify the tracking number and try again.\n" +
-                               $"If you continue to have issues, please contact customer support.\n\n" +
-                               $"📞 Customer Support: 0800-HELP-NOW\n" +
-                               $"🌐 Web: www.ryzenshipment.co.nz";
-                }
-            }, "Unknown", "Tracking Details Retrieval");
-        }
-
         private void AddToHistory(string trackingNumber)
         {
             ErrorHandler.SafeExecute(() =>
             {
                 if (cmbHistory != null && !cmbHistory.Items.Contains(trackingNumber))
                 {
-                    cmbHistory.Items.Insert(0, trackingNumber); // Add to top
-
-                    // Limit history to 10 items
+                    cmbHistory.Items.Insert(0, trackingNumber);
                     while (cmbHistory.Items.Count > 10)
                     {
                         cmbHistory.Items.RemoveAt(cmbHistory.Items.Count - 1);
@@ -254,9 +227,9 @@ namespace ShippingManagementSystem
 
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        File.WriteAllText(saveFileDialog.FileName, rtbTrackingDetails.Text);
+                        System.IO.File.WriteAllText(saveFileDialog.FileName, rtbTrackingDetails.Text);
                         ErrorHandler.ShowInfo("Tracking details saved successfully!", "Save Complete");
-                        ErrorHandler.LogInfo($"Tracking details saved to: {saveFileDialog.FileName}", "btnSave_Click");
+                        ErrorHandler.LogInfo($"Saved to: {saveFileDialog.FileName}", "btnSave_Click");
                     }
                 }
             }, "Save Tracking Details");
@@ -269,12 +242,11 @@ namespace ShippingManagementSystem
                 if (string.IsNullOrWhiteSpace(rtbTrackingDetails.Text) ||
                     rtbTrackingDetails.Text.Contains("Welcome to the Shipment Tracking System"))
                 {
-                    ErrorHandler.ShowWarning("No tracking details to print. Please track a package first.", "No Data");
+                    ErrorHandler.ShowWarning("No tracking details to print.", "No Data");
                     return;
                 }
 
-                ErrorHandler.ShowInfo("Print functionality would open the system print dialog here.\n\nIn a full implementation, this would integrate with the system printer.", "Print Simulation");
-                ErrorHandler.LogInfo("Print tracking details requested", "btnPrint_Click");
+                ErrorHandler.ShowInfo("Print dialog would open here.", "Print Simulation");
             }, "Print Tracking Details");
         }
 
@@ -283,26 +255,18 @@ namespace ShippingManagementSystem
             ErrorHandler.SafeExecute(() =>
             {
                 string helpText = "📋 TRACKING SYSTEM HELP\n" +
-                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
                                  "🔍 HOW TO TRACK:\n" +
-                                 "1. Enter your tracking number in the text field\n" +
+                                 "1. Enter your tracking number\n" +
                                  "2. Click the 'Track' button\n" +
                                  "3. View detailed tracking information\n\n" +
-                                 "📝 SAMPLE TRACKING NUMBERS:\n" +
-                                 "• 1234567890 - In Transit package\n" +
-                                 "• 0987654321 - Delivered package\n" +
-                                 "• TEST123456 - Processing package\n\n" +
                                  "💾 ADDITIONAL FEATURES:\n" +
                                  "• Save tracking details to file\n" +
                                  "• Print tracking information\n" +
                                  "• Search history for quick access\n" +
-                                 "• Dark mode toggle\n\n" +
-                                 "📞 SUPPORT:\n" +
-                                 "Phone: 0800-SHIPPING\n" +
-                                 "Email: support@ryzenshipment.co.nz";
+                                 "• Dark mode toggle";
 
                 MessageBox.Show(helpText, "Tracking System Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ErrorHandler.LogInfo("Help information displayed", "btnHelp_Click");
             }, "Help Display");
         }
 
@@ -312,7 +276,6 @@ namespace ShippingManagementSystem
             {
                 isDarkMode = !isDarkMode;
                 ApplyTheme(isDarkMode);
-                ErrorHandler.LogInfo($"Theme changed to: {(isDarkMode ? "Dark" : "Light")}", "btnDarkMode_Click");
             }, "Theme Toggle");
         }
 
@@ -324,17 +287,14 @@ namespace ShippingManagementSystem
                 Color foregroundColor = darkMode ? Color.White : Color.Black;
                 Color controlBackColor = darkMode ? Color.FromArgb(62, 62, 66) : Color.White;
 
-                // Apply to form
                 this.BackColor = backgroundColor;
                 this.ForeColor = foregroundColor;
 
-                // Apply to controls
                 foreach (Control control in this.Controls)
                 {
                     ApplyThemeToControl(control, backgroundColor, foregroundColor, controlBackColor);
                 }
 
-                // Update button text
                 if (btnDarkMode != null)
                 {
                     btnDarkMode.Text = darkMode ? "Light Mode" : "Dark Mode";
@@ -349,7 +309,6 @@ namespace ShippingManagementSystem
                 control.BackColor = control is TextBox || control is RichTextBox || control is ComboBox ? controlBgColor : bgColor;
                 control.ForeColor = fgColor;
 
-                // Recursively apply to child controls
                 foreach (Control child in control.Controls)
                 {
                     ApplyThemeToControl(child, bgColor, fgColor, controlBgColor);
@@ -357,20 +316,18 @@ namespace ShippingManagementSystem
             }, "Individual Control Theme");
         }
 
-        // Enhanced form closing with cleanup
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             ErrorHandler.SafeExecute(() =>
             {
                 clockTimer?.Stop();
                 clockTimer?.Dispose();
-                ErrorHandler.LogInfo("Tracking form closed and resources cleaned up", "OnFormClosing");
+                ErrorHandler.LogInfo("Tracking form closed", "OnFormClosing");
             }, "Form Cleanup");
 
             base.OnFormClosing(e);
         }
 
-        // Method to refresh data (called from dashboard)
         public void RefreshData()
         {
             ErrorHandler.SafeExecute(() =>
